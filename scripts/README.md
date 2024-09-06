@@ -1,0 +1,1 @@
+Carpeta donde se persisten scripts de la base de datos. 
