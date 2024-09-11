@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package com.unla.stockearte;
+
+// Opciones para generar código Java
+option java_multiple_files = true;
+option java_package = "com.unla.stockearte";
+option java_outer_classname = "ProductServiceProto";
+
+// Mensaje para representar un producto
+message Product {
+    string nombre = 1;
+    string codigo_unico = 2;  // Código único generado de 10 caracteres
+    string talle = 3;
+    bytes foto = 4;           // Foto en formato binario
+    string color = 5;
+    int32 stock = 6;
+}
+
+// Mensajes para las respuestas del servicio
+message CreateProductResponse {
+    Product producto = 1;
+}
+
+message EditProductResponse {
+    Product producto = 1;
+}
+
+message DeleteProductResponse {
+    bool success = 1;
+}
+
+// Servicio para manejar productos
+service ProductService {
+    // Crea un nuevo producto
+    rpc CreateProduct(Product) returns (CreateProductResponse);
+
+    // Edita un producto existente
+    rpc EditProduct(Product) returns (EditProductResponse);
+
+    // Elimina un producto por código único
+    rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
+}
+
+// Mensaje para solicitar la eliminación de un producto
+message DeleteProductRequest {
+    string codigo_unico = 1;  // Código único del producto a eliminar
+}
