@@ -25,7 +25,7 @@ public class UserModel {
     @Column(nullable = false)
     private boolean enabled;
     @ManyToOne
-    @JoinColumn(name = "store_id")  // Especifica la columna en la tabla de usuarios
+    @JoinColumn(name = "store_id")
     private StoreModel store;
 	public UserModel(String username, String password, String firstName, String lastName, boolean enabled,
 			StoreModel store) {

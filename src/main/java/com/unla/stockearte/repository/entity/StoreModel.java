@@ -30,8 +30,8 @@ public class StoreModel {
     @ManyToMany    
     @JoinTable(
             name = "stores_products",
-            joinColumns = @JoinColumn(name = "store_id"), // Column in the join table that refers to stores
-            inverseJoinColumns = @JoinColumn(name = "product_id") // Column in the join table that refers to products
+            joinColumns = @JoinColumn(name = "store_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
         )
     private List<ProductModel> products;
 	public StoreModel(String code, String address, String city, String province, boolean enabled,
