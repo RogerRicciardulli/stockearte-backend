@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.unla.stockearte.CreateStoreRequest;
 import com.unla.stockearte.EditStoreRequest;
+import com.unla.stockearte.GetStoreRequest;
+import com.unla.stockearte.GetStoreResponse;
 import com.unla.stockearte.GetStoresRequest;
 import com.unla.stockearte.GetStoresResponse;
 import com.unla.stockearte.StoreResponse;
@@ -39,7 +41,7 @@ public class StoreService extends StoreServiceImplBase {
     			+ "enabled = {}", request.getStoreId(), request.getCode(), request.getAddress(), request.getCity(), 
 				request.getProvince(), request.getEnabled());
     	StoreResponse response = storesServiceLogic.editStore(request.getStoreId(), request.getCode(), request.getAddress(), 
-    			request.getCity(), request.getProvince(), request.getEnabled());
+    			request.getCity(), request.getProvince(), request.getEnabled(), request.getProductsIdList(), request.getUsersIdList());
     	log.info("[StoreService.editStore] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
@@ -49,6 +51,14 @@ public class StoreService extends StoreServiceImplBase {
     	log.info("[StoreService.getStores] code = {}, enabled = {}", request.getCode(), request.getEnabled());
     	GetStoresResponse response = storesServiceLogic.getStores(request.getCode(), request.getEnabled());
     	log.info("[StoreService.getStores] response = {}", response);
+		responseObserver.onNext(response);
+		responseObserver.onCompleted();
+	}
+	@Override
+	public void getStore(GetStoreRequest request, StreamObserver<GetStoreResponse> responseObserver) {
+    	log.info("[StoreService.getStore] storeId = {}", request.getStoreId());
+    	GetStoreResponse response = storesServiceLogic.getStore(request.getStoreId());
+    	log.info("[StoreService.getStore] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}

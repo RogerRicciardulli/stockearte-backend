@@ -3,7 +3,8 @@ package com.unla.stockearte.dev;
 public enum Version {
 
 	V0_0_1("0.0.1", "Primera version para stockearte", "20240906"),
-	ACTUAL(V0_0_1);
+	V1_0_0("1.0.0", "Primera version para stockearte", "20240923"),
+	ACTUAL(V1_0_0);
 	
 	private String versionNumber;
 	private String description;

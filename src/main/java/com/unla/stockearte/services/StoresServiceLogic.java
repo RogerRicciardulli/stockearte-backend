@@ -9,10 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.unla.stockearte.GetStoreResponse;
 import com.unla.stockearte.GetStoresResponse;
 import com.unla.stockearte.StoreResponse;
 import com.unla.stockearte.StoreSummary;
+import com.unla.stockearte.repository.ProductsRepository;
 import com.unla.stockearte.repository.StoresRepository;
+import com.unla.stockearte.repository.entity.ProductModel;
 import com.unla.stockearte.repository.entity.StoreModel;
 
 @Service
@@ -21,6 +24,10 @@ public class StoresServiceLogic {
 	private static final Logger log = LoggerFactory.getLogger(StoresServiceLogic.class);
     @Autowired
     private StoresRepository repository;
+    @Autowired
+    private ProductsRepository productsRepository;
+    @Autowired
+    private UsersServiceLogic usersServiceLogic;
     
 	public StoreResponse saveStore(String code, String address, String city, 
 			String province, boolean enabled) {
@@ -36,7 +43,7 @@ public class StoresServiceLogic {
 		return response.build();
 	}
 	public StoreResponse editStore(int storeId, String code, String address, String city, 
-			String province, String enabled) {
+			String province, String enabled, List<Integer> productsId, List<Integer> usersId) {
 		StoreResponse.Builder response = StoreResponse.newBuilder();
 		try {
 			boolean result = false;
@@ -47,7 +54,9 @@ public class StoresServiceLogic {
 				storeModelModified.setAddress(!address.isEmpty() ? address : storeModelModified.getAddress());
 				storeModelModified.setCity(!city.isEmpty() ? city : storeModelModified.getCity());
 				storeModelModified.setProvince(!province.isEmpty() ? province : storeModelModified.getProvince());
+				storeModelModified.setProducts(!productsId.isEmpty() ? getProducts(productsId) : storeModelModified.getProducts());
 				storeModelModified.setEnabled(!enabled.isEmpty() ? Boolean.valueOf(enabled) : storeModelModified.isEnabled());
+				setUsers(usersId, storeId);
 				repository.save(storeModelModified);
 				result = true;
 			}
@@ -57,6 +66,20 @@ public class StoresServiceLogic {
 			response.setSuccess(false);
 		}
 		return response.build(); 
+	}
+	public List<ProductModel> getProducts(List<Integer> productsId) {
+		List<ProductModel> products = new ArrayList<ProductModel>();
+		for(int id : productsId) {
+			Optional<ProductModel> productModel = productsRepository.findById((long)id);
+			if(productModel.isPresent())
+				products.add(productModel.get());
+		}
+		return products; 
+	}
+	public void setUsers(List<Integer> usersId, int storeId) {
+		for(int id : usersId) {
+			usersServiceLogic.editUser("", "", "", "", "", storeId, id);
+		}
 	}
 	public GetStoresResponse getStores(String code, String enabled) {
 		GetStoresResponse.Builder response = GetStoresResponse.newBuilder();
@@ -80,13 +103,38 @@ public class StoresServiceLogic {
 			}
 			for(StoreModel store : stores) {
 			    StoreSummary storeSummary = StoreSummary.newBuilder()
+			            .setStoreId((int)store.getId())
 			            .setCode(store.getCode())
+			            .setAddress(store.getAddress())
+			            .setCity(store.getCity())
+			            .setProvince(store.getProvince())
 			            .setEnabled(store.isEnabled())
 			            .build();
 			    response.addStores(storeSummary);
 			}
 		} catch (Exception e) {
 			log.error("[StoresServiceLogic.getStores] Unexpected error.", e);
+		}
+		return response.build(); 
+	}
+	public GetStoreResponse getStore(int storeId) {
+		GetStoreResponse.Builder response = GetStoreResponse.newBuilder();
+		try {
+			Optional<StoreModel> storeModel = repository.findById((long)storeId);
+			if(storeModel.isPresent()) {
+				StoreModel store = storeModel.get();
+			    StoreSummary storeSummary = StoreSummary.newBuilder()
+			            .setStoreId((int)store.getId())
+			            .setCode(store.getCode())
+			            .setAddress(store.getAddress())
+			            .setCity(store.getCity())
+			            .setProvince(store.getProvince())
+			            .setEnabled(store.isEnabled())
+			            .build();			
+				response.setStore(storeSummary);
+			}
+		} catch (Exception e) {
+			log.error("[StoresServiceLogic.getStore] Unexpected error.", e);
 		}
 		return response.build(); 
 	}

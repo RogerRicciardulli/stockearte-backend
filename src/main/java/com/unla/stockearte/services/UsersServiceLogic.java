@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.unla.stockearte.GetUserResponse;
 import com.unla.stockearte.GetUsersResponse;
 import com.unla.stockearte.UserResponse;
 import com.unla.stockearte.UserSummary;
@@ -119,10 +120,41 @@ public class UsersServiceLogic {
 			    UserSummary userSummary = UserSummary.newBuilder()
 			            .setUserId(user.getId().toString())
 			            .setUsername(user.getUsername())
+			            .setPassword(user.getPassword())
+			            .setFirstName(user.getFirstName())
+			            .setLastName(user.getLastName())
 			            .setEnabled(user.isEnabled())
-			            .setStoreCode(user.getStore() != null ? user.getStore().getCode() : "null")
+			            .setStoreId(user.getStore() != null ? (int)user.getStore().getId() : 0)
+			            .setStoreCode(user.getStore() != null ? user.getStore().getCode() : null)
 			            .build();
 			    response.addUsers(userSummary);
+			}
+		} catch (Exception e) {
+			log.error("[UsersServiceLogic.getUsers] Unexpected error.", e);
+		}
+		return response.build(); 
+	}
+	public GetUserResponse getUser(int userId, String username) {
+		GetUserResponse.Builder response = GetUserResponse.newBuilder();
+		try {
+			Optional<UserModel> userModel = Optional.of(new UserModel());
+			if(!username.isEmpty())
+				userModel = Optional.of(repository.findByUsername(username));
+			else
+				userModel = repository.findById((long)userId);
+			if(userModel.isPresent()) {
+				UserModel user = userModel.get();
+			    UserSummary userSummary = UserSummary.newBuilder()
+			            .setUserId(user.getId().toString())
+			            .setUsername(user.getUsername())
+			            .setPassword(user.getPassword())
+			            .setFirstName(user.getFirstName())
+			            .setLastName(user.getLastName())
+			            .setEnabled(user.isEnabled())
+			            .setStoreId(user.getStore() != null ? (int)user.getStore().getId() : 0)
+			            .setStoreCode(user.getStore() != null ? user.getStore().getCode() : null)
+			            .build();			
+				response.setUser(userSummary);
 			}
 		} catch (Exception e) {
 			log.error("[UsersServiceLogic.getUsers] Unexpected error.", e);

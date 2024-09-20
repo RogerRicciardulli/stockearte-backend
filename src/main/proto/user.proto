@@ -12,6 +12,7 @@ service UserService {
   rpc AsignUserToStore (AsignUserToStoreRequest) returns (UserResponse);
   rpc EditUser (EditUserRequest) returns (UserResponse);
   rpc GetUsers (GetUsersRequest) returns (GetUsersResponse);
+  rpc GetUser (GetUserRequest) returns (GetUserResponse);
 }
 message CreateUserRequest {
   string username = 1;
@@ -45,12 +46,23 @@ message GetUsersRequest {
 message UserSummary {
   string userId = 1;
   string username = 2;
-  bool enabled = 3;
-  string storeCode = 4;
+  string password = 3;
+  string firstName = 4;
+  string lastName = 5;
+  bool enabled = 6;
+  int32 storeId = 7;
+  string storeCode= 8;
 }
 message GetUsersResponse {
   repeated UserSummary users = 1;
 }
 message UserResponse{
   bool success = 1;
+}
+message GetUserRequest {
+  int32 userId = 1;
+  string username = 2;
+}
+message GetUserResponse {
+  UserSummary user = 1;
 }
