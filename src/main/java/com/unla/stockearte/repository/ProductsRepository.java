@@ -12,7 +12,7 @@ public interface ProductsRepository extends JpaRepository<ProductModel, Long> {
 
 	List<ProductModel> findByName(String name);
 
-	List<ProductModel> findBySize(String size);
+	List<ProductModel> findByTalle(String size);
 	
 	List<ProductModel> findByColor(String color);
 
