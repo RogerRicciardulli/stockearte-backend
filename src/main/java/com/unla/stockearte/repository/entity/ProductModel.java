@@ -21,10 +21,14 @@ public class ProductModel {
     private String code;
     @Column(nullable = false, length = 50)
     private String name;
+    @Column(nullable = false, length = 50)
+    private String talle;
     @Column(nullable = false, length = 20)
-    private String size;
+    private int stock;
     @Column(nullable = false, length = 20)
     private String color;
+    @Column(nullable = false, length = 20)
+    private boolean isHabilitado;
     @Column(nullable = false, length = 20)
     private String photo;
     @ManyToMany    
@@ -34,12 +38,13 @@ public class ProductModel {
             inverseJoinColumns = @JoinColumn(name = "store_id")
         )
     private List<StoreModel> stores;
-	public ProductModel(String code, String name, String size, String color, String photo,
+	public ProductModel(String code, String name, String talle, int stock, String color, String photo,
 			List<StoreModel> stores) {
 		super();
 		this.code = code;
 		this.name = name;
-		this.size = size;
+		this.talle = talle;
+		this.stock = stock;
 		this.color = color;
 		this.photo = photo;
 		this.stores = stores;
@@ -64,11 +69,11 @@ public class ProductModel {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getSize() {
-		return size;
+	public int getStock() {
+		return stock;
 	}
-	public void setSize(String size) {
-		this.size = size;
+	public void setStock(int stock) {
+		this.stock = stock;
 	}
 	public String getColor() {
 		return color;
@@ -88,5 +93,16 @@ public class ProductModel {
 	public void setStores(List<StoreModel> stores) {
 		this.stores = stores;
 	}
-      
+	public String getTalle() {
+		return talle;
+	}
+	public void setTalle(String talle) {
+		this.talle = talle;
+	}
+	public boolean isHabilitado() {
+		return isHabilitado;
+	}
+	public void setHabilitado(boolean isHabilitado) {
+		this.isHabilitado = isHabilitado;
+	}
 }
