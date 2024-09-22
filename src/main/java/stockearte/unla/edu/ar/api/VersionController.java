@@ -1,4 +1,4 @@
-package com.unla.stockearte.api;
+package stockearte.unla.edu.ar.api;
 
 import java.util.ArrayList;
 import java.util.Collection;
