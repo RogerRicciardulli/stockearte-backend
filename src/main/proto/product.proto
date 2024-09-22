@@ -7,29 +7,6 @@ option java_multiple_files = true;
 option java_package = "com.unla.stockearte";
 option java_outer_classname = "ProductServiceProto";
 
-// Mensaje para representar un producto
-message Product {
-    string nombre = 1;
-    string codigo_unico = 2;  // Código único generado de 10 caracteres
-    string talle = 3;
-    bytes foto = 4;           // Foto en formato binario
-    string color = 5;
-    int32 stock = 6;
-}
-
-// Mensajes para las respuestas del servicio
-message CreateProductResponse {
-    Product producto = 1;
-}
-
-message EditProductResponse {
-    Product producto = 1;
-}
-
-message DeleteProductResponse {
-    bool success = 1;
-}
-
 // Servicio para manejar productos
 service ProductService {
     // Crea un nuevo producto
@@ -40,9 +17,76 @@ service ProductService {
 
     // Elimina un producto por código único
     rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
+
+    // Obtener listado de productos dependiendo el campo filtro
+    rpc FilterProduct(FilterProductRequest) returns (FilterProductResponse);
+
+    //Detalle y edicion
+    rpc GetDetailProduct(GetDetailProductRequest) returns (GetDetailProductResponse);
 }
 
+
+// Mensaje para representar un producto
+message Product {
+    uint64 id = 1;
+    string nombre = 2;
+    string talle = 3;
+    string foto = 4;           // Foto en formato binario
+    string color = 5;
+    int32 stock = 6;
+    repeated uint64 idTienda = 7;
+}
+
+// Mensajes para las respuestas del servicio
+message CreateProductResponse {
+    bool success = 1;
+}
+
+
+// Mensajes para las respuestas del servicio
+message EditProductResponse {
+    bool success = 1;
+}
+
+// Mensajes para las respuestas del servicio
+message DeleteProductResponse {
+    bool success = 1;
+}
 // Mensaje para solicitar la eliminación de un producto
 message DeleteProductRequest {
-    string codigo_unico = 1;  // Código único del producto a eliminar
+    int32 id = 1; // Código único del producto a eliminar
+}
+
+message FilterProductRequest{
+    string nombre = 1;
+    string codigo_unico = 2;
+    string talle = 3;
+    string color = 4;
+} 
+
+message FilterProductResponse{
+    repeated Product product = 1;
+}
+
+message GetProductRequest{
+    string tipo_usuario = 1;
+    string idTienda = 2;
+}
+
+message GetProductResponse{
+    repeated Product product = 1;
+}
+
+message GetDetailProductRequest{
+    uint64 id = 1;
+    string tipo_usuario = 2;
+    int32 stock = 3;
+    string nombre = 4;
+    string talle = 5;
+    bytes foto = 6;           
+    string color = 7;
+}
+
+message GetDetailProductResponse{
+    Product product = 1;
 }
