@@ -125,7 +125,7 @@ public class UsersServiceLogic {
 			            .setLastName(user.getLastName())
 			            .setEnabled(user.isEnabled())
 			            .setStoreId(user.getStore() != null ? (int)user.getStore().getId() : 0)
-			            .setStoreCode(user.getStore() != null ? user.getStore().getCode() : null)
+			            .setStoreCode(user.getStore() != null ? user.getStore().getCode() : "")
 			            .build();
 			    response.addUsers(userSummary);
 			}
