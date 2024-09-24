@@ -117,6 +117,7 @@ public class ProductServiceLogic {
     	List<Product> productMiddList = new ArrayList<>();
     	for(ProductModel product: productList) {
 			Product product2 = Product.newBuilder()
+					.setCodigo(product.getCode())
 					.setColor(product.getColor())
 					.setFoto(product.getPhoto())
 					.setId(product.getId().intValue())
