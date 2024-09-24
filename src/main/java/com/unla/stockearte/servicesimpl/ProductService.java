@@ -52,7 +52,7 @@ public class ProductService extends ProductServiceImplBase{
     
     @Override
     public void filterProduct(FilterProductRequest request, StreamObserver<FilterProductResponse> responseObserver) {
-    	FilterProductResponse response = productServiceLogic.getListByFilterProduct(request.getColor(), request.getNombre(), request.getTalle());
+    	FilterProductResponse response = productServiceLogic.getListByFilterProduct(request.getColor(), request.getNombre(), request.getTalle(), request.getHabilitado());
     	log.info("[StoreService.createStore] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();

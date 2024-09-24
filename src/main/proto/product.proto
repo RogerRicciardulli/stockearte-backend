@@ -45,6 +45,7 @@ message FilterProductRequest{
     string codigo_unico = 2;
     string talle = 3;
     string color = 4;
+    bool habilitado = 5;
 } 
 
 message FilterProductResponse{
