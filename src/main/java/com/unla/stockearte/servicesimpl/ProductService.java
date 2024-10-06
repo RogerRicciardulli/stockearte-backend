@@ -4,7 +4,7 @@ import org.lognet.springboot.grpc.GRpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.unla.stockearte.services.ProductServiceLogic;
+
 import com.unla.stockearte.CreateProductResponse;
 import com.unla.stockearte.DeleteProductRequest;
 import com.unla.stockearte.DeleteProductResponse;
@@ -15,6 +15,8 @@ import com.unla.stockearte.GetDetailProductRequest;
 import com.unla.stockearte.GetDetailProductResponse;
 import com.unla.stockearte.Product;
 import com.unla.stockearte.ProductServiceGrpc.ProductServiceImplBase;
+import com.unla.stockearte.services.ProductServiceLogic;
+
 import io.grpc.stub.StreamObserver;
 
 @GRpcService

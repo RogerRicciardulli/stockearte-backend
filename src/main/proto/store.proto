@@ -41,6 +41,8 @@ message StoreSummary {
   string city = 4;
   string province = 5;
   bool enabled = 6;
+  repeated int32 usersId = 7;
+  repeated int32 productsId = 8;
 }
 message GetStoresResponse {
   repeated StoreSummary stores = 1;

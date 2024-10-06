@@ -15,8 +15,10 @@ import com.unla.stockearte.StoreResponse;
 import com.unla.stockearte.StoreSummary;
 import com.unla.stockearte.repository.ProductsRepository;
 import com.unla.stockearte.repository.StoresRepository;
+import com.unla.stockearte.repository.UsersRepository;
 import com.unla.stockearte.repository.entity.ProductModel;
 import com.unla.stockearte.repository.entity.StoreModel;
+import com.unla.stockearte.repository.entity.UserModel;
 
 @Service
 public class StoresServiceLogic {
@@ -26,6 +28,8 @@ public class StoresServiceLogic {
     private StoresRepository repository;
     @Autowired
     private ProductsRepository productsRepository;
+    @Autowired
+    private UsersRepository usersRepository;
     @Autowired
     private UsersServiceLogic usersServiceLogic;
     
@@ -122,15 +126,22 @@ public class StoresServiceLogic {
 		try {
 			Optional<StoreModel> storeModel = repository.findById((long)storeId);
 			if(storeModel.isPresent()) {
-				StoreModel store = storeModel.get();
-			    StoreSummary storeSummary = StoreSummary.newBuilder()
+				StoreModel store = storeModel.get();	
+			    StoreSummary.Builder storeSummaryBuilder = StoreSummary.newBuilder()
 			            .setStoreId((int)store.getId())
 			            .setCode(store.getCode())
 			            .setAddress(store.getAddress())
 			            .setCity(store.getCity())
 			            .setProvince(store.getProvince())
-			            .setEnabled(store.isEnabled())
-			            .build();			
+			            .setEnabled(store.isEnabled());
+			    for(ProductModel product : store.getProducts()) {
+			        storeSummaryBuilder.addProductsId(product.getId().intValue());
+			    }
+			    List<UserModel> users = usersRepository.findByStore(store);
+			    for(UserModel user : users) {
+			        storeSummaryBuilder.addUsersId(user.getId().intValue());
+			    }
+			    StoreSummary storeSummary = storeSummaryBuilder.build();
 				response.setStore(storeSummary);
 			}
 		} catch (Exception e) {
