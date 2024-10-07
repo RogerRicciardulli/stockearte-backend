@@ -58,6 +58,7 @@ message GetUsersResponse {
 }
 message UserResponse{
   bool success = 1;
+  int32 storeId = 2;
 }
 message GetUserRequest {
   int32 userId = 1;

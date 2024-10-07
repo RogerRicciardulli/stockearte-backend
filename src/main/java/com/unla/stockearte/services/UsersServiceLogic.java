@@ -46,6 +46,7 @@ public class UsersServiceLogic {
 		try {
 			UserModel userModel = repository.findByUsername(username);
 			response.setSuccess(userModel.getUsername().equals(username) && userModel.getPassword().equals(password));
+			response.setStoreId((int)userModel.getStore().getId());
 		} catch (Exception e) {
 			log.error("[UsersServiceLogic.authenticateUser] Unexpected error.", e);
 			response.setSuccess(false);
