@@ -62,7 +62,7 @@ public class ProductService extends ProductServiceImplBase{
     
     @Override
     public void getDetailProduct(GetDetailProductRequest request, StreamObserver<GetDetailProductResponse> responseObserver) {
-    	GetDetailProductResponse response = productServiceLogic.getDetailProduct(request.getId(), request.getTipoUsuario(), request.getStock(), request.getNombre(), request.getTalle(), request.getFoto(), request.getColor());
+    	GetDetailProductResponse response = productServiceLogic.getDetailProduct(request.getId());
     	log.info("[ProductService.createStore] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();

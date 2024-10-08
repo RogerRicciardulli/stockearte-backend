@@ -13,6 +13,8 @@ public interface UsersRepository extends JpaRepository<UserModel, Long> {
 
 	List<UserModel> findByStore(StoreModel store);
 	
+	List<UserModel> findByStoreId(long storeId);
+	
 	UserModel findByUsernameAndStore(String username, StoreModel store);
 
 }

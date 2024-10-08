@@ -3,13 +3,13 @@ package com.unla.stockearte.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.protobuf.ByteString;
 import com.unla.stockearte.CreateProductResponse;
 import com.unla.stockearte.DeleteProductResponse;
 import com.unla.stockearte.EditProductResponse;
@@ -17,8 +17,10 @@ import com.unla.stockearte.FilterProductResponse;
 import com.unla.stockearte.GetDetailProductResponse;
 import com.unla.stockearte.Product;
 import com.unla.stockearte.repository.ProductsRepository;
+import com.unla.stockearte.repository.StockRepository;
 import com.unla.stockearte.repository.StoresRepository;
 import com.unla.stockearte.repository.entity.ProductModel;
+import com.unla.stockearte.repository.entity.StockModel;
 import com.unla.stockearte.repository.entity.StoreModel;
 import com.unla.stockearte.utils.RandomString;
 
@@ -31,6 +33,10 @@ public class ProductServiceLogic {
     
     @Autowired
     private StoresRepository storeRepository;
+    @Autowired
+    private StocksServiceLogic stocksServiceLogic;
+    @Autowired
+    private StockRepository stockRepository;
     
     public CreateProductResponse saveProduct(String nombre, String talle, String foto, String color, int stock, List<Long> tiendas) {
     	List<StoreModel> listStore = new ArrayList<StoreModel>();
@@ -47,12 +53,44 @@ public class ProductServiceLogic {
     	ProductModel product = new ProductModel(code, nombre, talle, stock, color, "FOTO", listStore);
     	product.setHabilitado(true);
 		repository.save(product);
-		
+		saveNewStock(listStore, code);
 		CreateProductResponse.Builder response = CreateProductResponse.newBuilder();
 		response.setSuccess(true);
 		return response.build();
     }
-    
+    public void saveNewStock(List<StoreModel> listStore, String code) {
+    	for(StoreModel store : listStore) {
+    		ProductModel productModelSaved = repository.findByCode(code);
+    		if(productModelSaved != null){
+    			if(stockRepository.findByProductIdAndStoreId(productModelSaved.getId(), store.getId()) == null) {
+    				stocksServiceLogic.saveStock((int)store.getId(), productModelSaved.getId().intValue(), 0);
+    			}
+    		}
+    	}
+    }
+    public void editStock(List<StoreModel> listStore, String code) {
+        ProductModel productModelSaved = repository.findByCode(code);
+        if (productModelSaved != null) {
+            List<StockModel> existingStocks = stockRepository.findByProductId(productModelSaved.getId());
+            List<Long> existingStoreIds = existingStocks.stream()
+                    .map(stock -> stock.getStore().getId())
+                    .collect(Collectors.toList());
+            List<Long> newStoreIds = listStore.stream()
+                    .map(StoreModel::getId)
+                    .collect(Collectors.toList());
+            for (StoreModel store : listStore) {
+                if (!existingStoreIds.contains(store.getId())) {
+                    stocksServiceLogic.saveStock((int)store.getId(), productModelSaved.getId().intValue(), 0);
+                }
+            }
+            for (StockModel stock : existingStocks) {
+                if (!newStoreIds.contains(stock.getStore().getId())) {
+                    stockRepository.delete(stock);
+                }
+            }
+        }
+    }
+
     public EditProductResponse editProduct(long id, String nombre, String talle, String foto, String color, int stock, List<Long> tiendas) {
     	List<StoreModel> listStore = new ArrayList<StoreModel>();
     	
@@ -76,7 +114,7 @@ public class ProductServiceLogic {
     		product.get().setHabilitado(true);
     		
     		repository.save(product.get());
-    		
+    		editStock(listStore, product.get().getCode());
     		response.setSuccess(true);
     		return response.build();
     	}
@@ -137,35 +175,29 @@ public class ProductServiceLogic {
     	return productMiddList;
     }
     
-    public GetDetailProductResponse getDetailProduct(long id, String tipoUsuario, int stock, String nombre, String talle, ByteString foto, String color) {
+    public GetDetailProductResponse getDetailProduct(long id) {
     	GetDetailProductResponse.Builder response = GetDetailProductResponse.newBuilder();
-    	
-    	Optional<ProductModel> product = repository.findById(id);
-    	
-    	if(tipoUsuario.equalsIgnoreCase("tienda")) {
-    		if(product.isPresent()) {
-    			product.get().setStock(stock);
-    			repository.save(product.get());
-    		}
-    	} else {
-    		product.get().setStock(stock);
-    		product.get().setName(nombre);
-    		product.get().setTalle(talle);
-    		product.get().setColor(color);
-    		repository.save(product.get());
-    	}
-    	
-    	Product product2 = Product.newBuilder()
-    			.setColor(product.get().getColor())
-				.setFoto(product.get().getPhoto())
-				.setId(product.get().getId().intValue())
-				.setNombre(product.get().getName())
-				.setStock(product.get().getStock())
-				.setTalle(product.get().getTalle())
-				.build();
-    	
-    	response.setProduct(product2);
-    	return response.build();
+		try {
+	    	Optional<ProductModel> productModel = repository.findById(id);
+			if(productModel.isPresent()) {
+				ProductModel product = productModel.get();	
+			    Product.Builder productBuilder = Product.newBuilder()
+			            .setId(product.getId())
+			            .setCodigo(product.getCode())
+			            .setColor(product.getColor())
+			            .setFoto(product.getPhoto())
+			            .setNombre(product.getName())
+			            .setStock(product.getStock())
+			            .setTalle(product.getTalle());
+			    for(StoreModel store : product.getStores()) {
+			    	productBuilder.addIdTienda(store.getId());
+			    }
+				response.setProduct(productBuilder);
+			}
+		} catch (Exception e) {
+			log.error("[ProductServiceLogic.getDetailProduct] Unexpected error.", e);
+		}
+		return response.build(); 
     }
 
 }
