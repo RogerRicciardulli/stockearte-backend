@@ -138,17 +138,17 @@ public class ProductServiceLogic {
     public FilterProductResponse getListByFilterProduct(String color, String nombre, String talle, boolean habilitado) {
     	FilterProductResponse.Builder response = FilterProductResponse.newBuilder();
     	if(nombre.equals("GetAllList")) {
-    		List<Product> productList = generateList((List<ProductModel>) repository.findAll());
+    		List<Product> productList = generateList((List<ProductModel>) repository.findByIsHabilitado(true));
     		response.addAllProduct(productList);
     	} else {
         	if(!color.isEmpty()) {
-        		List<Product> productList = generateList((List<ProductModel>) repository.findByColor(color));
+        		List<Product> productList = generateList((List<ProductModel>) repository.findByNameAndIsHabilitado(color, true));
         		response.addAllProduct(productList);
         	} else if(!nombre.isEmpty()) {
-        		List<Product> productList = generateList((List<ProductModel>) repository.findByName(nombre));
+        		List<Product> productList = generateList((List<ProductModel>) repository.findByNameAndIsHabilitado(nombre, true));
         		response.addAllProduct(productList);
         	} else if(!talle.isEmpty()) {
-        		List<Product> productList = generateList((List<ProductModel>) repository.findByTalle(talle));
+        		List<Product> productList = generateList((List<ProductModel>) repository.findByTalleAndIsHabilitado(talle, true));
         		response.addAllProduct(productList);
         	} else if (habilitado) {
         		List<Product> productList = generateList((List<ProductModel>) repository.findAll());

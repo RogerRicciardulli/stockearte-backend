@@ -10,10 +10,12 @@ public interface ProductsRepository extends JpaRepository<ProductModel, Long> {
 
 	ProductModel findByCode(String code);
 
-	List<ProductModel> findByName(String name);
+	List<ProductModel> findByNameAndIsHabilitado(String name, boolean isHabilitado);
 
-	List<ProductModel> findByTalle(String size);
+	List<ProductModel> findByTalleAndIsHabilitado(String size, boolean isHabilitado);
 	
-	List<ProductModel> findByColor(String color);
+	List<ProductModel> findByColorAndIsHabilitado(String color, boolean isHabilitado);
+	
+	List<ProductModel> findByIsHabilitado(boolean isHabilitado);
 	
 }
