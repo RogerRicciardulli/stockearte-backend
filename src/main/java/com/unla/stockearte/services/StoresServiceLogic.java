@@ -3,6 +3,7 @@ package com.unla.stockearte.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,11 @@ import com.unla.stockearte.GetStoresResponse;
 import com.unla.stockearte.StoreResponse;
 import com.unla.stockearte.StoreSummary;
 import com.unla.stockearte.repository.ProductsRepository;
+import com.unla.stockearte.repository.StockRepository;
 import com.unla.stockearte.repository.StoresRepository;
 import com.unla.stockearte.repository.UsersRepository;
 import com.unla.stockearte.repository.entity.ProductModel;
+import com.unla.stockearte.repository.entity.StockModel;
 import com.unla.stockearte.repository.entity.StoreModel;
 import com.unla.stockearte.repository.entity.UserModel;
 
@@ -32,6 +35,12 @@ public class StoresServiceLogic {
     private UsersRepository usersRepository;
     @Autowired
     private UsersServiceLogic usersServiceLogic;
+    @Autowired
+    private StocksServiceLogic stocksServiceLogic;
+    @Autowired
+    private StockRepository stockRepository;
+    @Autowired
+    private ProductsRepository productRepository;
     
 	public StoreResponse saveStore(String code, String address, String city, 
 			String province, boolean enabled) {
@@ -46,20 +55,21 @@ public class StoresServiceLogic {
 		}
 		return response.build();
 	}
-	public StoreResponse editStore(int storeId, String code, String address, String city, 
-			String province, String enabled, List<Integer> productsId, List<Integer> usersId) {
+	public StoreResponse editStore(int storeId, String code, String address, String city,  
+            String province, boolean enabled, List<Integer> productsId, List<Integer> usersId) {
 		StoreResponse.Builder response = StoreResponse.newBuilder();
 		try {
 			boolean result = false;
-			Optional<StoreModel> storeModel = repository.findById((long)storeId);
-			if(storeModel.isPresent()) {
+			Optional<StoreModel> storeModel = repository.findById((long) storeId);
+			if (storeModel.isPresent()) {
 				StoreModel storeModelModified = storeModel.get();
 				storeModelModified.setCode(!code.isEmpty() ? code : storeModelModified.getCode());
 				storeModelModified.setAddress(!address.isEmpty() ? address : storeModelModified.getAddress());
 				storeModelModified.setCity(!city.isEmpty() ? city : storeModelModified.getCity());
 				storeModelModified.setProvince(!province.isEmpty() ? province : storeModelModified.getProvince());
 				storeModelModified.setProducts(!productsId.isEmpty() ? getProducts(productsId) : storeModelModified.getProducts());
-				storeModelModified.setEnabled(!enabled.isEmpty() ? Boolean.valueOf(enabled) : storeModelModified.isEnabled());
+				storeModelModified.setEnabled(storeModelModified.isEnabled() != enabled ? enabled : storeModelModified.isEnabled());
+				updateStoreProductsAndStock(storeModelModified, productsId);
 				setUsers(usersId, storeId);
 				repository.save(storeModelModified);
 				result = true;
@@ -69,8 +79,29 @@ public class StoresServiceLogic {
 			log.error("[StoresServiceLogic.editStore] Unexpected error.", e);
 			response.setSuccess(false);
 		}
-		return response.build(); 
+		return response.build();
 	}
+
+	private void updateStoreProductsAndStock(StoreModel storeModel, List<Integer> newProductIds) {
+		List<StockModel> existingStocks = stockRepository.findByStoreId(storeModel.getId());
+		List<Long> existingProductIds = existingStocks.stream()
+			.map(stock -> stock.getProduct().getId())
+			.collect(Collectors.toList());
+		for (Integer productId : newProductIds) {
+			if (!existingProductIds.contains(productId.longValue())) {
+			ProductModel product = productRepository.findById(productId.longValue()).orElse(null);
+				if (product != null) {
+				stocksServiceLogic.saveStock((int) storeModel.getId(), productId, 0);
+				}
+			}
+		}
+		for (StockModel stock : existingStocks) {
+			if (!newProductIds.contains(stock.getProduct().getId().intValue())) {
+			stockRepository.delete(stock);
+			}
+		}
+	}
+
 	public List<ProductModel> getProducts(List<Integer> productsId) {
 		List<ProductModel> products = new ArrayList<ProductModel>();
 		for(int id : productsId) {
@@ -82,7 +113,7 @@ public class StoresServiceLogic {
 	}
 	public void setUsers(List<Integer> usersId, int storeId) {
 		for(int id : usersId) {
-			usersServiceLogic.editUser("", "", "", "", "", storeId, id);
+			usersServiceLogic.editUser("CambioInterno", "", "", "", true, storeId, id);
 		}
 	}
 	public GetStoresResponse getStores(String code, String enabled) {

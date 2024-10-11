@@ -22,7 +22,7 @@ import io.grpc.stub.StreamObserver;
 @GRpcService
 public class ProductService extends ProductServiceImplBase{
 	
-	private static final Logger log = LoggerFactory.getLogger(StoreService.class);
+	private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     @Autowired
     private ProductServiceLogic productServiceLogic;
     
@@ -30,7 +30,7 @@ public class ProductService extends ProductServiceImplBase{
     public void createProduct(Product request, StreamObserver<CreateProductResponse> responseObserver) {
     	CreateProductResponse response = productServiceLogic.saveProduct(request.getNombre(), request.getTalle(), request.getFoto(), request.getColor(), 
 				request.getStock(), request.getIdTiendaList());
-    	log.info("[StoreService.createStore] response = {}", response);
+    	log.info("[ProductService.createProduct] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}
@@ -39,7 +39,7 @@ public class ProductService extends ProductServiceImplBase{
     public void editProduct(Product request, StreamObserver<EditProductResponse> responseObserver) {
     	EditProductResponse response = productServiceLogic.editProduct(request.getId(), request.getNombre(), request.getTalle(), request.getFoto(), request.getColor(), 
 				request.getStock(), request.getIdTiendaList());
-    	log.info("[StoreService.createStore] response = {}", response);
+    	log.info("[ProductService.editProduct] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}
@@ -47,7 +47,7 @@ public class ProductService extends ProductServiceImplBase{
     @Override
     public void deleteProduct(DeleteProductRequest request, StreamObserver<DeleteProductResponse> responseObserver) {
     	DeleteProductResponse response = productServiceLogic.deleteProduct(request.getId());
-    	log.info("[StoreService.createStore] response = {}", response);
+    	log.info("[ProductService.deleteProduct] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}
@@ -55,15 +55,15 @@ public class ProductService extends ProductServiceImplBase{
     @Override
     public void filterProduct(FilterProductRequest request, StreamObserver<FilterProductResponse> responseObserver) {
     	FilterProductResponse response = productServiceLogic.getListByFilterProduct(request.getColor(), request.getNombre(), request.getTalle(), request.getHabilitado());
-    	log.info("[StoreService.createStore] response = {}", response);
+    	log.info("[ProductService.filterProduct] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}
     
     @Override
     public void getDetailProduct(GetDetailProductRequest request, StreamObserver<GetDetailProductResponse> responseObserver) {
-    	GetDetailProductResponse response = productServiceLogic.getDetailProduct(request.getId(), request.getTipoUsuario(), request.getStock(), request.getNombre(), request.getTalle(), request.getFoto(), request.getColor());
-    	log.info("[StoreService.createStore] response = {}", response);
+    	GetDetailProductResponse response = productServiceLogic.getDetailProduct(request.getId());
+    	log.info("[ProductService.createStore] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}

@@ -46,6 +46,10 @@ public class UsersServiceLogic {
 		try {
 			UserModel userModel = repository.findByUsername(username);
 			response.setSuccess(userModel.getUsername().equals(username) && userModel.getPassword().equals(password));
+			if(userModel.getStore() != null)
+				response.setStoreId((int)userModel.getStore().getId());
+			else
+				response.setStoreId(0);
 		} catch (Exception e) {
 			log.error("[UsersServiceLogic.authenticateUser] Unexpected error.", e);
 			response.setSuccess(false);
@@ -71,7 +75,7 @@ public class UsersServiceLogic {
 		return response.build();
 	}
 	public UserResponse editUser(String username, String password, String firstName, 
-			String lastName, String enabled, int storeId, int userId) {
+			String lastName, boolean enabled, int storeId, int userId) {
 		UserResponse.Builder response = UserResponse.newBuilder();
 		try {
 			boolean result = false;
@@ -79,11 +83,12 @@ public class UsersServiceLogic {
 			Optional<StoreModel> storeModel = storesRepository.findById((long)storeId);
 			if(userModel.isPresent() && storeModel.isPresent()) {
 				UserModel userModelModified = userModel.get();
-				userModelModified.setUsername(!username.isEmpty() ? username : userModelModified.getUsername());
 				userModelModified.setPassword(!password.isEmpty() ? password : userModelModified.getPassword());
 				userModelModified.setFirstName(!firstName.isEmpty() ? firstName : userModelModified.getFirstName());
 				userModelModified.setLastName(!lastName.isEmpty() ? lastName : userModelModified.getLastName());
-				userModelModified.setEnabled(!enabled.isEmpty() ? Boolean.valueOf(enabled) : userModelModified.isEnabled());
+				if(!username.equals("CambioInterno"))
+					userModelModified.setUsername(!username.isEmpty() ? username : userModelModified.getUsername());
+					userModelModified.setEnabled(userModelModified.isEnabled() != enabled ? enabled : userModelModified.isEnabled());
 				userModelModified.setStore(storeModel.get() != null ? storeModel.get() : userModelModified.getStore());
 				repository.save(userModel.get());
 				result = true;
