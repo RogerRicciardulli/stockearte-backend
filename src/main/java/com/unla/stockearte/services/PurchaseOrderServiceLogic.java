@@ -47,7 +47,6 @@ public class PurchaseOrderServiceLogic {
 
 	public CreatePurchaseOrderResponse savePurchaseOrder(long idTienda, List<OrderDetail> orders, String observaciones, String ordenDespacho) {
 		List<OrderDetailsModel> detailsList = new ArrayList<OrderDetailsModel>();
-		
 		for (OrderDetail detail : orders) {
 			OrderDetailsModel detailModel = new OrderDetailsModel();
 			detailModel.setCantidad(detail.getCantidad());
@@ -57,7 +56,6 @@ public class PurchaseOrderServiceLogic {
 			detailsList.add(detailModel);
 			orderRepository.save(detailModel);
 		}
-
 		PurchaseOrderModel purchaseOrder = new PurchaseOrderModel();
 		purchaseOrder.setIdTienda(idTienda);
 		purchaseOrder.setOrderDetails(detailsList);
@@ -74,11 +72,8 @@ public class PurchaseOrderServiceLogic {
 		order.setIdOrden(model.getId());
 		order.setIdTienda(idTienda);
 		order.setList(detailsList);
-		
 		kafkaService.sendPurchaseOrder(order);
-		
 		String nameTopic = Long.toString(idTienda) +"_solicitudes";
-		
 		kafkaTopicService.createTopic(nameTopic, 1, 1);
 
 		CreatePurchaseOrderResponse.Builder response = CreatePurchaseOrderResponse.newBuilder();
@@ -136,9 +131,9 @@ public class PurchaseOrderServiceLogic {
 
 	public List<PurchaseOrder> purchaseOrderModelToPurchaseOrder(List<PurchaseOrderModel> purchases) {
 		List<PurchaseOrder> list = new ArrayList<>();
-		List<OrderDetail> listOrderDetail = new ArrayList<>();
 		try {
 			for(PurchaseOrderModel currentPurchase : purchases) {
+				List<OrderDetail> listOrderDetail = new ArrayList<>();
 				List<OrderDetailsModel> orders = currentPurchase.getOrderDetails();
 				for(OrderDetailsModel order : orders) {
 					OrderDetail newOrderDetail = OrderDetail.newBuilder()
