@@ -50,7 +50,7 @@ public class ProductServiceLogic {
     	
     	String code = RandomString.getAlphaNumericString(10);
     	
-    	ProductModel product = new ProductModel(code, nombre, talle, stock, color, "FOTO", listStore);
+    	ProductModel product = new ProductModel(code, nombre, talle, 0, color, "FOTO", listStore);
     	product.setHabilitado(true);
 		repository.save(product);
 		saveNewStock(listStore, code);
