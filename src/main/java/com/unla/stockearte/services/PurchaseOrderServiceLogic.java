@@ -77,6 +77,8 @@ public class PurchaseOrderServiceLogic {
 		String nameTopic = Long.toString(idTienda) +"-solicitudes";
 		
 		kafkaTopicService.createTopic(nameTopic, 1, 1);
+		
+		updateStateOrderByDispatch();
 
 		CreatePurchaseOrderResponse.Builder response = CreatePurchaseOrderResponse.newBuilder();
 		response.setSuccess(true);
@@ -147,6 +149,10 @@ public class PurchaseOrderServiceLogic {
 			purchaseMiddList.add(purchase2);
 		}
 		return purchaseMiddList;
+	}
+	
+	public void updateStateOrderByDispatch() {
+		
 	}
 
 	public static LocalDateTime convertToLocalDateTime(Timestamp timestamp) {
