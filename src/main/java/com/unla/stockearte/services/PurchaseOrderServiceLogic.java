@@ -3,6 +3,7 @@ package com.unla.stockearte.services;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,8 @@ import com.unla.stockearte.repository.entity.OrderDetailsModel;
 import com.unla.stockearte.repository.OrderDetailsRepository;
 import com.unla.stockearte.repository.PurchaseOrderRepository;
 import com.unla.stockearte.repository.entity.PurchaseOrderModel;
+import com.unla.stockearte.repository.entity.StoreModel;
+import com.unla.stockearte.repository.entity.UserModel;
 import com.unla.stockearte.repository.model.PurchaseOrderKafka;
 
 @Service
@@ -52,7 +55,6 @@ public class PurchaseOrderServiceLogic {
 
 	public CreatePurchaseOrderResponse savePurchaseOrder(long idTienda, List<OrderDetail> orders, String observaciones, String ordenDespacho) {
 		List<OrderDetailsModel> detailsList = new ArrayList<OrderDetailsModel>();
-		
 		for (OrderDetail detail : orders) {
 			OrderDetailsModel detailModel = new OrderDetailsModel();
 			detailModel.setCantidad(detail.getCantidad());
@@ -62,7 +64,6 @@ public class PurchaseOrderServiceLogic {
 			detailsList.add(detailModel);
 			orderRepository.save(detailModel);
 		}
-
 		PurchaseOrderModel purchaseOrder = new PurchaseOrderModel();
 		purchaseOrder.setIdTienda(idTienda);
 		purchaseOrder.setOrderDetails(detailsList);
@@ -79,11 +80,8 @@ public class PurchaseOrderServiceLogic {
 		order.setIdOrden(model.getId());
 		order.setIdTienda(idTienda);
 		order.setList(detailsList);
-		
 		kafkaService.sendPurchaseOrder(order);
-		
-		String nameTopic = Long.toString(idTienda) +"-solicitudes";
-		
+		String nameTopic = Long.toString(idTienda) +"_solicitudes";
 		String nameTopicDispatch = Long.toString(idTienda) +"-despacho";
 		
 		kafkaTopicService.createTopic(nameTopic, 1, 1);
@@ -98,7 +96,6 @@ public class PurchaseOrderServiceLogic {
 		return response.build();
 	}
 	
-
 	public EditPurchaseOrderResponse editPurchaseOrder(int idTienda, long idOrdenDeCompra, String estado,
 			Timestamp fechaDespacho, String observaciones, String ordenDespacho) {
 		Optional<PurchaseOrderModel> purchaseOrder = purchaseRepository.findById(idOrdenDeCompra);
@@ -133,35 +130,52 @@ public class PurchaseOrderServiceLogic {
 
 	public GetPurchaseOrderByIdResponse getById(int id) {
 		GetPurchaseOrderByIdResponse.Builder response = GetPurchaseOrderByIdResponse.newBuilder();
-		Optional<PurchaseOrderModel> purchase = purchaseRepository.findById((long) id);
-		if (purchase.isPresent()) {
-			List<PurchaseOrderModel> list = new ArrayList<>();
-			list.add(purchase.get());
-			response.addAllPurchaseOrders(generateList(list));
+		try {
+			if(id == 0) {
+				response.addAllPurchaseOrders(purchaseOrderModelToPurchaseOrder(purchaseRepository.findAll()));
+			} else {
+				List<PurchaseOrderModel> orders = new ArrayList<PurchaseOrderModel>();
+				orders.add(purchaseRepository.findById((long)id).get());
+				response.addAllPurchaseOrders(purchaseOrderModelToPurchaseOrder(orders));
+			}
+		} catch (Exception e) {
+			log.error("[PurchaseOrderServiceLogic.getById] Unexpected error.", e);
 		}
 		return response.build();
 	}
 
-	public List<PurchaseOrder> generateList(List<PurchaseOrderModel> list) {
-		/*
-		 * List<OrderDetail> listOrderResponse = new ArrayList<OrderDetail>(); for
-		 * (OrderDetailsModel order: list.get(1).getOrderDetails()) { OrderDetail detail
-		 * = OrderDetail.newBuilder() .setCantidad(order.getCantidad())
-		 * .setCodigo(order.getCodigo()) .setColor(order.getColor())
-		 * .setTalle(order.getTalle()) .build(); listOrderResponse.add(detail); }
-		 */
-
-		List<PurchaseOrder> purchaseMiddList = new ArrayList<>();
-		for (PurchaseOrderModel purchase : list) {
-			PurchaseOrder purchase2 = PurchaseOrder.newBuilder().setEstado(purchase.getState()).setId(purchase.getId())
-					.setObservaciones(purchase.getObservations()).setOrdenDespacho(purchase.getOrderDispatch()).build();
-			// .setOrders(3, listOrderResponse)
-			// .setFechaSolicitud(null)
-			// .setIdTienda(purchase.getIdTienda())
-			// .setFechaRecepcion(purchase.getReception())
-			purchaseMiddList.add(purchase2);
+	public List<PurchaseOrder> purchaseOrderModelToPurchaseOrder(List<PurchaseOrderModel> purchases) {
+		List<PurchaseOrder> list = new ArrayList<>();
+		try {
+			for(PurchaseOrderModel currentPurchase : purchases) {
+				List<OrderDetail> listOrderDetail = new ArrayList<>();
+				List<OrderDetailsModel> orders = currentPurchase.getOrderDetails();
+				for(OrderDetailsModel order : orders) {
+					OrderDetail newOrderDetail = OrderDetail.newBuilder()
+							.setCodigo(order.getCodigo()).setCantidad(order.getCantidad()).setColor(order.getColor()).setTalle(order.getTalle())
+							.build();
+					listOrderDetail.add(newOrderDetail);
+				}
+				PurchaseOrder.Builder newPurchaseBuilder = PurchaseOrder.newBuilder()
+					    .setEstado(currentPurchase.getState())
+					    .setId(currentPurchase.getId())
+					    .setIdTienda(currentPurchase.getIdTienda().intValue())
+					    .setObservaciones(currentPurchase.getObservations())
+					    .setOrdenDespacho(currentPurchase.getOrderDispatch())
+					    .addAllOrders(listOrderDetail);
+					if (currentPurchase.getRequest() != null) {
+					    newPurchaseBuilder.setFechaSolicitud(convertToTimestamp(currentPurchase.getRequest()));
+					}
+					if (currentPurchase.getReception() != null) {
+					    newPurchaseBuilder.setFechaRecepcion(convertToTimestamp(currentPurchase.getReception()));
+					}
+					PurchaseOrder newPurchase = newPurchaseBuilder.build();
+				list.add(newPurchase);
+			}
+		} catch (Exception e) {
+			log.error("[PurchaseOrderServiceLogic.purchaseOrderModelToPurchaseOrder] Unexpected error.", e);
 		}
-		return purchaseMiddList;
+		return list;
 	}
 	
 	@Transactional
@@ -174,8 +188,16 @@ public class PurchaseOrderServiceLogic {
 		  
 	   }
 
-	public static LocalDateTime convertToLocalDateTime(Timestamp timestamp) {
+	public LocalDateTime convertToLocalDateTime(Timestamp timestamp) {
 		Instant instant = Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
 		return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
 	}
+
+	public com.google.protobuf.Timestamp convertToTimestamp(LocalDateTime localDateTime) {
+        Instant instant = localDateTime.toInstant(ZoneOffset.UTC);
+        return Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build();	
+        }
 }

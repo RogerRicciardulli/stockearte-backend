@@ -20,14 +20,14 @@ import io.grpc.stub.StreamObserver;
 @GRpcService
 public class PurchaseOrderService extends PurchaseOrderServiceImplBase{
 	
-	private static final Logger log = LoggerFactory.getLogger(StoreService.class);
+	private static final Logger log = LoggerFactory.getLogger(PurchaseOrderService.class);
     @Autowired
     private PurchaseOrderServiceLogic purchaseOrderServiceLogic;
     
     @Override
     public void createPurchaseOrder(PurchaseOrder request, StreamObserver<CreatePurchaseOrderResponse> responseObserver) {
     	CreatePurchaseOrderResponse response = purchaseOrderServiceLogic.savePurchaseOrder(request.getIdTienda(), request.getOrdersList(), request.getObservaciones(), request.getOrdenDespacho());
-    	log.info("[StoreService.createStore] response = {}", response);
+    	log.info("[PurchaseOrderService.createPurchaseOrder] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}
@@ -35,7 +35,7 @@ public class PurchaseOrderService extends PurchaseOrderServiceImplBase{
     @Override
     public void editPurchaseOrder(PurchaseOrder request, StreamObserver<EditPurchaseOrderResponse> responseObserver) {
     	EditPurchaseOrderResponse response = purchaseOrderServiceLogic.editPurchaseOrder(request.getIdTienda(), request.getId(), request.getEstado(), request.getFechaRecepcion(), request.getObservaciones(), request.getOrdenDespacho());
-    	log.info("[StoreService.createStore] response = {}", response);
+    	log.info("[PurchaseOrderService.editPurchaseOrder] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}
@@ -43,7 +43,7 @@ public class PurchaseOrderService extends PurchaseOrderServiceImplBase{
     @Override
     public void deletePurchaseOrder(DeletePurchaseOrderRequest request, StreamObserver<DeletePurchaseOrderResponse> responseObserver) {
     	DeletePurchaseOrderResponse response = purchaseOrderServiceLogic.deletePurchaseOrder(request.getId());
-    	log.info("[StoreService.createStore] response = {}", response);
+    	log.info("[PurchaseOrderService.deletePurchaseOrder] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}
@@ -51,7 +51,7 @@ public class PurchaseOrderService extends PurchaseOrderServiceImplBase{
     @Override
     public void listPurchaseOrdersById(GetPurchaseOrderByIdRequest request, StreamObserver<GetPurchaseOrderByIdResponse> responseObserver) {
     	GetPurchaseOrderByIdResponse response = purchaseOrderServiceLogic.getById(request.getId());
-    	log.info("[StoreService.createStore] response = {}", response);
+    	log.info("[PurchaseOrderService.listPurchaseOrdersById] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}

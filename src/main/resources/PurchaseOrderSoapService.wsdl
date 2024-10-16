@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://stockearte-backend.com/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://stockearte-backend.com/"
+    name="PurchaseOrderSoapService">
+
+    <types>
+        <xsd:schema targetNamespace="http://stockearte-backend.com/">
+            <xsd:complexType name="OrderDetail">
+                <xsd:sequence>
+                    <xsd:element name="codigo" type="xsd:string"/>
+                    <xsd:element name="color" type="xsd:string"/>
+                    <xsd:element name="talle" type="xsd:string"/>
+                    <xsd:element name="cantidad" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="PurchaseOrder">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:int"/>
+                    <xsd:element name="estado" type="xsd:string"/>
+                    <xsd:element name="observaciones" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="orden_despacho" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="fechaSolicitud" type="xsd:dateTime"/>
+                    <xsd:element name="fechaRecepcion" type="xsd:dateTime" minOccurs="0"/>
+                    <xsd:element name="idTienda" type="xsd:int"/>
+                    <xsd:element name="orders" type="tns:OrderDetail" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:element name="GetPurchaseOrdersRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="id" type="xsd:int" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetPurchaseOrdersResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="purchaseOrders" type="tns:PurchaseOrder" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+
+    <wsdl:message name="GetPurchaseOrdersRequest">
+        <wsdl:part name="parameters" element="tns:GetPurchaseOrdersRequest"/>
+    </wsdl:message>
+
+    <wsdl:message name="GetPurchaseOrdersResponse">
+        <wsdl:part name="parameters" element="tns:GetPurchaseOrdersResponse"/>
+    </wsdl:message>
+
+    <wsdl:portType name="PurchaseOrderPortType">
+        <wsdl:operation name="GetPurchaseOrders">
+            <wsdl:input message="tns:GetPurchaseOrdersRequest"/>
+            <wsdl:output message="tns:GetPurchaseOrdersResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="PurchaseOrderBinding" type="tns:PurchaseOrderPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="GetPurchaseOrders">
+            <soap:operation soapAction="http://stockearte-backend.com/GetPurchaseOrders"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="PurchaseOrderSoapService">
+        <documentation>SOAP Service for managing Purchase Orders.</documentation>
+        <wsdl:port name="PurchaseOrderPort" binding="tns:PurchaseOrderBinding">
+            <soap:address location="http://localhost:8080/ws/PurchaseOrderSoapService"/>
+        </wsdl:port>
+    </wsdl:service>
+</definitions>
