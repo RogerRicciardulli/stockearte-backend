@@ -28,4 +28,15 @@ public class KafkaProducerService {
         }
     }
     
+    public void sendDespacho(String despacho, String fecha) {
+        try {
+        	String prueba = despacho.concat("  ").concat(fecha);
+            String jsonValue = objectMapper.writeValueAsString(prueba);
+            System.out.println(jsonValue);
+            kafkaTemplate.send("recepcion", jsonValue);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

@@ -9,7 +9,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.protobuf.Timestamp;
 import com.unla.stockearte.CreatePurchaseOrderResponse;
 import com.unla.stockearte.DeletePurchaseOrderResponse;
@@ -17,8 +20,10 @@ import com.unla.stockearte.EditPurchaseOrderResponse;
 import com.unla.stockearte.GetPurchaseOrderByIdResponse;
 import com.unla.stockearte.OrderDetail;
 import com.unla.stockearte.PurchaseOrder;
+import com.unla.stockearte.kafka.KafkaListenerService;
 import com.unla.stockearte.kafka.KafkaProducerService;
 import com.unla.stockearte.kafka.KafkaTopicService;
+import com.unla.stockearte.repository.entity.DispatchOrder;
 import com.unla.stockearte.repository.entity.OrderDetailsModel;
 import com.unla.stockearte.repository.OrderDetailsRepository;
 import com.unla.stockearte.repository.PurchaseOrderRepository;
@@ -35,6 +40,9 @@ public class PurchaseOrderServiceLogic {
 	
 	@Autowired
 	KafkaTopicService kafkaTopicService;
+	
+	@Autowired
+	KafkaListenerService kafkaListenerService;
 
 	@Autowired
 	private PurchaseOrderRepository purchaseRepository;
@@ -76,9 +84,14 @@ public class PurchaseOrderServiceLogic {
 		
 		String nameTopic = Long.toString(idTienda) +"-solicitudes";
 		
+		String nameTopicDispatch = Long.toString(idTienda) +"-despacho";
+		
 		kafkaTopicService.createTopic(nameTopic, 1, 1);
 		
-		updateStateOrderByDispatch();
+		
+		kafkaListenerService.iniciarConsumo(nameTopicDispatch);
+		
+		//updateStateOrderByDispatch();
 
 		CreatePurchaseOrderResponse.Builder response = CreatePurchaseOrderResponse.newBuilder();
 		response.setSuccess(true);
@@ -151,9 +164,15 @@ public class PurchaseOrderServiceLogic {
 		return purchaseMiddList;
 	}
 	
-	public void updateStateOrderByDispatch() {
-		
-	}
+	@Transactional
+	  public void updateStateOrder(DispatchOrder dispatchOrder) {
+		  PurchaseOrderModel orden = purchaseRepository.getById(dispatchOrder.getIdOrden());
+		  orden.setReception(LocalDateTime.now());
+		  orden.setState("RECIBIDA");
+		  purchaseRepository.save(orden);
+		  kafkaService.sendDespacho(orden.getOrderDispatch(), LocalDateTime.now().toString());
+		  
+	   }
 
 	public static LocalDateTime convertToLocalDateTime(Timestamp timestamp) {
 		Instant instant = Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
