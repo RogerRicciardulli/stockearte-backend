@@ -3,6 +3,7 @@ package com.unla.stockearte.soap;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
@@ -19,48 +20,48 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "PurchaseOrderService", targetNamespace = "http://stockearte-backend.com/", wsdlLocation = "file:/C:/Users/rricciardulli/Desktop/Personal/UNLa/4to/Distribuidos/stockearte-backend/src/main/resources/PurchaseOrderService.wsdl")
-public class PurchaseOrderService
+@WebServiceClient(name = "PurchaseOrderSoapService", targetNamespace = "http://stockearte-backend.com/", wsdlLocation = "file:/C:/Users/rricciardulli/Desktop/Personal/UNLa/4to/Distribuidos/stockearte-backend/src/main/resources/PurchaseOrderSoapService.wsdl")
+public class PurchaseOrderSoapService
     extends Service
 {
 
-    private final static URL PURCHASEORDERSERVICE_WSDL_LOCATION;
-    private final static WebServiceException PURCHASEORDERSERVICE_EXCEPTION;
-    private final static QName PURCHASEORDERSERVICE_QNAME = new QName("http://stockearte-backend.com/", "PurchaseOrderService");
+    private final static URL PURCHASEORDERSOAPSERVICE_WSDL_LOCATION;
+    private final static WebServiceException PURCHASEORDERSOAPSERVICE_EXCEPTION;
+    private final static QName PURCHASEORDERSOAPSERVICE_QNAME = new QName("http://stockearte-backend.com/", "PurchaseOrderSoapService");
 
     static {
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("file:/C:/Users/rricciardulli/Desktop/Personal/UNLa/4to/Distribuidos/stockearte-backend/src/main/resources/PurchaseOrderService.wsdl");
+            url = new URL("file:/C:/Users/rricciardulli/Desktop/Personal/UNLa/4to/Distribuidos/stockearte-backend/src/main/resources/PurchaseOrderSoapService.wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
-        PURCHASEORDERSERVICE_WSDL_LOCATION = url;
-        PURCHASEORDERSERVICE_EXCEPTION = e;
+        PURCHASEORDERSOAPSERVICE_WSDL_LOCATION = url;
+        PURCHASEORDERSOAPSERVICE_EXCEPTION = e;
     }
 
-    public PurchaseOrderService() {
-        super(__getWsdlLocation(), PURCHASEORDERSERVICE_QNAME);
+    public PurchaseOrderSoapService() {
+        super(__getWsdlLocation(), PURCHASEORDERSOAPSERVICE_QNAME);
     }
 
-    public PurchaseOrderService(WebServiceFeature... features) {
-        super(__getWsdlLocation(), PURCHASEORDERSERVICE_QNAME, features);
+    public PurchaseOrderSoapService(WebServiceFeature... features) {
+        super(__getWsdlLocation(), PURCHASEORDERSOAPSERVICE_QNAME, features);
     }
 
-    public PurchaseOrderService(URL wsdlLocation) {
-        super(wsdlLocation, PURCHASEORDERSERVICE_QNAME);
+    public PurchaseOrderSoapService(URL wsdlLocation) {
+        super(wsdlLocation, PURCHASEORDERSOAPSERVICE_QNAME);
     }
 
-    public PurchaseOrderService(URL wsdlLocation, WebServiceFeature... features) {
-        super(wsdlLocation, PURCHASEORDERSERVICE_QNAME, features);
+    public PurchaseOrderSoapService(URL wsdlLocation, WebServiceFeature... features) {
+        super(wsdlLocation, PURCHASEORDERSOAPSERVICE_QNAME, features);
     }
 
-    public PurchaseOrderService(URL wsdlLocation, QName serviceName) {
+    public PurchaseOrderSoapService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public PurchaseOrderService(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
+    public PurchaseOrderSoapService(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
         super(wsdlLocation, serviceName, features);
     }
 
@@ -87,10 +88,10 @@ public class PurchaseOrderService
     }
 
     private static URL __getWsdlLocation() {
-        if (PURCHASEORDERSERVICE_EXCEPTION!= null) {
-            throw PURCHASEORDERSERVICE_EXCEPTION;
+        if (PURCHASEORDERSOAPSERVICE_EXCEPTION!= null) {
+            throw PURCHASEORDERSOAPSERVICE_EXCEPTION;
         }
-        return PURCHASEORDERSERVICE_WSDL_LOCATION;
+        return PURCHASEORDERSOAPSERVICE_WSDL_LOCATION;
     }
 
 }

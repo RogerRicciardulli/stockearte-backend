@@ -5,7 +5,7 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
     targetNamespace="http://stockearte-backend.com/"
-    name="PurchaseOrderService">
+    name="PurchaseOrderSoapService">
 
     <types>
         <xsd:schema targetNamespace="http://stockearte-backend.com/">
@@ -77,10 +77,10 @@
         </wsdl:operation>
     </wsdl:binding>
 
-    <wsdl:service name="PurchaseOrderService">
+    <wsdl:service name="PurchaseOrderSoapService">
         <documentation>SOAP Service for managing Purchase Orders.</documentation>
         <wsdl:port name="PurchaseOrderPort" binding="tns:PurchaseOrderBinding">
-            <soap:address location="http://localhost:8080/PurchaseOrderService"/>
+            <soap:address location="http://localhost:8080/ws/PurchaseOrderSoapService"/>
         </wsdl:port>
     </wsdl:service>
 </definitions>

@@ -9,8 +9,8 @@ servers:
 paths:
   /purchase-orders:
     get:
-      summary: Retrieve a list of purchase orders
-      description: This endpoint returns a list of purchase orders.
+      summary: Retrieve a filtered list of purchase orders
+      description: This endpoint returns a filtered list of purchase orders.
       operationId: getPurchaseOrders
       parameters:
         - name: id
@@ -20,6 +20,33 @@ paths:
           schema:
             type: integer
             example: 10
+        - in: query
+          name: codigoProducto
+          schema:
+            type: string
+          description: Código del producto a filtrar
+        - in: query
+          name: fechaDesde
+          schema:
+            type: string
+            format: date
+          description: Fecha de inicio del rango de fechas
+        - in: query
+          name: fechaHasta
+          schema:
+            type: string
+            format: date
+          description: Fecha de fin del rango de fechas
+        - in: query
+          name: estado
+          schema:
+            type: string
+          description: Estado de la orden (Pendiente, Procesado, Completado, etc.)
+        - in: query
+          name: tienda
+          schema:
+            type: string
+          description: ID de la tienda (solo accesible para usuarios de casa central)
       responses:
         '200':
           description: A list of purchase orders

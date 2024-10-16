@@ -1,5 +1,5 @@
 
-package com.unla.stockearte.soap;
+package com.stockearte_backend;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -27,7 +27,7 @@ public interface PurchaseOrderPortType {
      * 
      * @param parameters
      * @return
-     *     returns com.unla.stockearte.soap.GetPurchaseOrdersResponse
+     *     returns com.stockearte_backend.GetPurchaseOrdersResponse
      */
     @WebMethod(operationName = "GetPurchaseOrders", action = "http://stockearte-backend.com/GetPurchaseOrders")
     @WebResult(name = "GetPurchaseOrdersResponse", targetNamespace = "http://stockearte-backend.com/", partName = "parameters")

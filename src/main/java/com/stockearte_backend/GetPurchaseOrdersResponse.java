@@ -1,5 +1,5 @@
 
-package com.unla.stockearte.soap;
+package com.stockearte_backend;
 
 import java.util.ArrayList;
 import java.util.List;
