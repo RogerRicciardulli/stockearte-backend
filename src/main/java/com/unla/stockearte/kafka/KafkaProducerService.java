@@ -23,7 +23,7 @@ public class KafkaProducerService {
         try {
             String jsonValue = objectMapper.writeValueAsString(purchaseOrder);
             System.out.println(jsonValue);
-            kafkaTemplate.send("orden-de-compras-3", jsonValue);
+            kafkaTemplate.send("orden-de-compra", jsonValue);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

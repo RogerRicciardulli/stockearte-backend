@@ -61,8 +61,10 @@ public class KafkaListenerService implements Runnable{
 					try {
 						DispatchOrder order = objectMapper.readValue(record.value(), DispatchOrder.class);
 						System.out.println("ID ORDEN" + order.getIdOrden());
-						System.out.println("ID ORDEN" + order.getIdDespacho());
-						purchaseOrderServiceLogic.updateStateOrder(order);
+						System.out.println("ID DESPACHO" + order.getIdDespacho());
+						if(order.getIdDespacho()!=0) {
+							purchaseOrderServiceLogic.updateStateOrder(order);
+						}
 						flag = false;
 					} catch (Exception e) {
 						System.err.println("Error al deserializar el mensaje: " + e.getMessage());

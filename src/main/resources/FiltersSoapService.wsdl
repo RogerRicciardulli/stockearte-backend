@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://stockearte-backend.com/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://stockearte-backend.com/"
+    name="FiltersSoapService">
+    
+    <types>
+        <xsd:schema>
+            <xsd:import namespace="http://stockearte-backend.com/" schemaLocation="filters.xsd"/>
+        </xsd:schema>
+    </types>
+
+    <message name="createFiltersModelRequestMessage">
+        <part name="parameters" element="tns:createFiltersModelRequest"/>
+    </message>
+    
+    <message name="createFiltersModelResponseMessage">
+        <part name="parameters" element="tns:createFiltersModelResponse"/>
+    </message>
+
+    <message name="updateFiltersModelRequestMessage">
+        <part name="parameters" element="tns:updateFiltersModelRequest"/>
+    </message>
+
+    <message name="updateFiltersModelResponseMessage">
+        <part name="parameters" element="tns:updateFiltersModelResponse"/>
+    </message>
+
+    <message name="deleteFiltersModelRequestMessage">
+        <part name="parameters" element="tns:deleteFiltersModelRequest"/>
+    </message>
+
+    <message name="deleteFiltersModelResponseMessage">
+        <part name="parameters" element="tns:deleteFiltersModelResponse"/>
+    </message>
+
+    <portType name="FiltersServicePortType">
+        <operation name="createFiltersModel">
+            <input message="tns:createFiltersModelRequestMessage"/>
+            <output message="tns:createFiltersModelResponseMessage"/>
+        </operation>
+        <operation name="updateFiltersModel">
+            <input message="tns:updateFiltersModelRequestMessage"/>
+            <output message="tns:updateFiltersModelResponseMessage"/>
+        </operation>
+        <operation name="deleteFiltersModel">
+            <input message="tns:deleteFiltersModelRequestMessage"/>
+            <output message="tns:deleteFiltersModelResponseMessage"/>
+        </operation>
+    </portType>
+
+    <binding name="FiltersServiceBinding" type="tns:FiltersServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="createFiltersModel">
+            <soap:operation soapAction="http://stockearte-backend.com/createFiltersModel"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="updateFiltersModel">
+            <soap:operation soapAction="http://stockearte-backend.com/updateFiltersModel"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="deleteFiltersModel">
+            <soap:operation soapAction="http://stockearte-backend.com/deleteFiltersModel"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="FiltersService">
+        <port name="FiltersServicePort" binding="tns:FiltersServiceBinding">
+            <soap:address location="http://localhost:8080/ws/filters"/>
+        </port>
+    </service>
+</definitions>

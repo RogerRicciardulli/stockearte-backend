@@ -30,35 +30,51 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetPurchaseOrdersRequest }
+     * Create an instance of {@link CreateFiltersModelRequest }
      * 
      */
-    public GetPurchaseOrdersRequest createGetPurchaseOrdersRequest() {
-        return new GetPurchaseOrdersRequest();
+    public CreateFiltersModelRequest createCreateFiltersModelRequest() {
+        return new CreateFiltersModelRequest();
     }
 
     /**
-     * Create an instance of {@link GetPurchaseOrdersResponse }
+     * Create an instance of {@link DeleteFiltersModelRequest }
      * 
      */
-    public GetPurchaseOrdersResponse createGetPurchaseOrdersResponse() {
-        return new GetPurchaseOrdersResponse();
+    public DeleteFiltersModelRequest createDeleteFiltersModelRequest() {
+        return new DeleteFiltersModelRequest();
     }
 
     /**
-     * Create an instance of {@link PurchaseOrder }
+     * Create an instance of {@link CreateFiltersModelResponse }
      * 
      */
-    public PurchaseOrder createPurchaseOrder() {
-        return new PurchaseOrder();
+    public CreateFiltersModelResponse createCreateFiltersModelResponse() {
+        return new CreateFiltersModelResponse();
     }
 
     /**
-     * Create an instance of {@link OrderDetail }
+     * Create an instance of {@link UpdateFiltersModelRequest }
      * 
      */
-    public OrderDetail createOrderDetail() {
-        return new OrderDetail();
+    public UpdateFiltersModelRequest createUpdateFiltersModelRequest() {
+        return new UpdateFiltersModelRequest();
+    }
+
+    /**
+     * Create an instance of {@link DeleteFiltersModelResponse }
+     * 
+     */
+    public DeleteFiltersModelResponse createDeleteFiltersModelResponse() {
+        return new DeleteFiltersModelResponse();
+    }
+
+    /**
+     * Create an instance of {@link UpdateFiltersModelResponse }
+     * 
+     */
+    public UpdateFiltersModelResponse createUpdateFiltersModelResponse() {
+        return new UpdateFiltersModelResponse();
     }
 
 }
