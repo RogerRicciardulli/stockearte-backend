@@ -1,21 +1,19 @@
 package com.unla.stockearte.kafka;
 
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Map;
+
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unla.stockearte.repository.entity.DispatchOrder;
+import com.unla.stockearte.repository.entity.ProductModel;
 import com.unla.stockearte.services.PurchaseOrderServiceLogic;
-
-import java.time.Duration;
-import java.util.Collections;
-import java.util.concurrent.ExecutorService;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 @Service
 public class KafkaListenerService implements Runnable{
@@ -31,10 +29,13 @@ public class KafkaListenerService implements Runnable{
 	
 	@Autowired
 	PurchaseOrderServiceLogic purchaseOrderServiceLogic;
+	
+	private KafkaConfig kafkaConfig;
 
 	@Autowired
-	public KafkaListenerService(KafkaConsumer<String, String> kafkaConsumer) {
+	public KafkaListenerService(KafkaConsumer<String, String> kafkaConsumer, KafkaConfig kafkaConfig) {
 		this.kafkaConsumer = kafkaConsumer;
+		this.kafkaConfig = kafkaConfig;
 	}
 	
 	public KafkaListenerService() {
@@ -71,6 +72,35 @@ public class KafkaListenerService implements Runnable{
 				});
 			}
 	}
+	
+    public String iniciarNovedades(String topicName) {
+        KafkaConsumer<String, String> newConsumer = new KafkaConsumer<>(kafkaConfig.consumerConfigs());
+        newConsumer.subscribe(Collections.singletonList(topicName));
+        boolean flag = true;
+        String jsonInput = null;
+
+        while (flag) {
+            ConsumerRecords<String, String> records = newConsumer.poll(Duration.ofMillis(100));
+            for (ConsumerRecord<String, String> record : records) {
+                System.out.println("Producto recibido: " + record.value());
+
+                try {
+                    ProductModel product = objectMapper.readValue(record.value(), ProductModel.class);
+                    System.out.println("Producto ID: " + product.getId());
+                    jsonInput = record.value();
+                    
+
+                    flag = false;
+                } catch (Exception e) {
+                    System.err.println("Error al deserializar el mensaje: " + e.getMessage());
+                    e.printStackTrace(); 
+                }
+            }
+        }
+        newConsumer.close();
+        return jsonInput;
+    }
+
 
 	//@PreDestroy
 	public void cerrarConsumidor() {

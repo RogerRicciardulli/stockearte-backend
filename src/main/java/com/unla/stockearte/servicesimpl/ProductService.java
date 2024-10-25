@@ -13,6 +13,7 @@ import com.unla.stockearte.FilterProductRequest;
 import com.unla.stockearte.FilterProductResponse;
 import com.unla.stockearte.GetDetailProductRequest;
 import com.unla.stockearte.GetDetailProductResponse;
+import com.unla.stockearte.GetNovedadesRequest;
 import com.unla.stockearte.Product;
 import com.unla.stockearte.ProductServiceGrpc.ProductServiceImplBase;
 import com.unla.stockearte.services.ProductServiceLogic;
@@ -56,6 +57,14 @@ public class ProductService extends ProductServiceImplBase{
     public void filterProduct(FilterProductRequest request, StreamObserver<FilterProductResponse> responseObserver) {
     	FilterProductResponse response = productServiceLogic.getListByFilterProduct(request.getColor(), request.getNombre(), request.getTalle(), request.getHabilitado());
     	log.info("[ProductService.filterProduct] response = {}", response);
+		responseObserver.onNext(response);
+		responseObserver.onCompleted();
+	}
+    
+    @Override
+    public void getNovedades(GetNovedadesRequest request, StreamObserver<FilterProductResponse> responseObserver) {
+    	FilterProductResponse response = productServiceLogic.listProducts(request.getNombre());
+    	log.info("[ProductService.getNovedades] response = {}", response);
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}

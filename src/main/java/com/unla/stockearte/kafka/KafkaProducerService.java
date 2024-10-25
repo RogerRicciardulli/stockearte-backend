@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unla.stockearte.repository.entity.ProductModel;
 import com.unla.stockearte.repository.model.PurchaseOrderKafka;
 
 @Service
@@ -37,6 +38,20 @@ public class KafkaProducerService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+    
+    public void sendProduct(String topicName, ProductModel product) {
+        try {
+            String jsonValue = objectMapper.writeValueAsString(product);
+            kafkaTemplate.send(topicName, jsonValue);
+            System.out.println("Producto enviado: " + jsonValue);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void sendNovedades(String topic, String json) {
+        kafkaTemplate.send(topic, json);
     }
     
 }

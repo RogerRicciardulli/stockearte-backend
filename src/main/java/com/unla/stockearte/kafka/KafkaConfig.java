@@ -43,4 +43,18 @@ public class KafkaConfig {
 	        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
 	        return new KafkaConsumer<>(configProps);
 	    }
+	 
+	 public Map<String, Object> consumerConfigs() {
+	        Map<String, Object> configProps = new HashMap<>();
+	        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+	        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "mi-grupo");
+	        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+	        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+	        return configProps;
+	    }
+	 
+	 @Bean
+	    public KafkaConsumer<String, String> kafkaConsumerCopy() {
+	        return new KafkaConsumer<>(consumerConfigs());
+	    }
 }

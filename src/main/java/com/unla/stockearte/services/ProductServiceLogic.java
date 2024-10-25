@@ -10,12 +10,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unla.stockearte.CreateProductResponse;
 import com.unla.stockearte.DeleteProductResponse;
 import com.unla.stockearte.EditProductResponse;
 import com.unla.stockearte.FilterProductResponse;
 import com.unla.stockearte.GetDetailProductResponse;
 import com.unla.stockearte.Product;
+import com.unla.stockearte.kafka.KafkaListenerService;
 import com.unla.stockearte.repository.ProductsRepository;
 import com.unla.stockearte.repository.StockRepository;
 import com.unla.stockearte.repository.StoresRepository;
@@ -37,6 +40,10 @@ public class ProductServiceLogic {
     private StocksServiceLogic stocksServiceLogic;
     @Autowired
     private StockRepository stockRepository;
+    @Autowired
+	KafkaListenerService kafkaListenerService;
+    
+    private final ObjectMapper objectMapper = new ObjectMapper();
     
     public CreateProductResponse saveProduct(String nombre, String talle, String foto, String color, int stock, List<Long> tiendas) {
     	List<StoreModel> listStore = new ArrayList<StoreModel>();
@@ -200,6 +207,29 @@ public class ProductServiceLogic {
 		return response.build(); 
     }
     
-  
-
+    public FilterProductResponse listProducts(String nombre) {
+        FilterProductResponse.Builder responseBuilder = FilterProductResponse.newBuilder();
+        
+        try {
+        	String jsonInput = kafkaListenerService.iniciarNovedades("novedades-prueba");
+            JsonNode jsonNode = objectMapper.readTree(jsonInput);
+           
+            Product product = Product.newBuilder()
+                    .setCodigo(jsonNode.get("code").asText())
+                    .setNombre(jsonNode.get("name").asText())
+                    .setTalle(jsonNode.get("size").asText())
+                    .setColor(jsonNode.get("color").asText())
+                    .setFoto(jsonNode.get("photo").asText())
+                    .setStock(0)
+                    .addIdTienda(0)
+                    .build();
+                    
+            responseBuilder.addProduct(product);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return responseBuilder.build();
+    }
 }
