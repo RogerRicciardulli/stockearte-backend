@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://stockearte-backend.com/"
+           targetNamespace="http://stockearte-backend.com/"
+           xmlns="http://stockearte-backend.com/"
+           elementFormDefault="qualified">
+
+    <xs:element name="createFiltersModelRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="productCode" type="xs:string" minOccurs="0"/>
+                <xs:element name="filtersName" type="xs:string"/>
+                <xs:element name="state" type="xs:string" minOccurs="0"/>
+                <xs:element name="idTienda" type="xs:long" minOccurs="0"/>
+                <xs:element name="desde" type="xs:date" minOccurs="0"/>
+                <xs:element name="hasta" type="xs:date" minOccurs="0"/>
+                <xs:element name="habilitado" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createFiltersModelResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateFiltersModelRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="productCode" type="xs:string" minOccurs="0"/>
+                <xs:element name="filtersName" type="xs:string"/>
+                <xs:element name="state" type="xs:string" minOccurs="0"/>
+                <xs:element name="idTienda" type="xs:long" minOccurs="0"/>
+                <xs:element name="desde" type="xs:date" minOccurs="0"/>
+                <xs:element name="hasta" type="xs:date" minOccurs="0"/>
+                <xs:element name="habilitado" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateFiltersModelResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteFiltersModelRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteFiltersModelResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

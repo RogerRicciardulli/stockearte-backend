@@ -81,16 +81,13 @@ public class PurchaseOrderServiceLogic {
 		order.setIdTienda(idTienda);
 		order.setList(detailsList);
 		kafkaService.sendPurchaseOrder(order);
-		String nameTopic = Long.toString(idTienda) +"_solicitudes";
+		
+		String nameOrder = Long.toString(idTienda) +"-despacho";
+		kafkaTopicService.createTopic("orden-de-compra", 1, 1);
+		
 		String nameTopicDispatch = Long.toString(idTienda) +"-despacho";
-		
-		kafkaTopicService.createTopic(nameTopic, 1, 1);
-		
-		
 		kafkaListenerService.iniciarConsumo(nameTopicDispatch);
 		
-		//updateStateOrderByDispatch();
-
 		CreatePurchaseOrderResponse.Builder response = CreatePurchaseOrderResponse.newBuilder();
 		response.setSuccess(true);
 		return response.build();
