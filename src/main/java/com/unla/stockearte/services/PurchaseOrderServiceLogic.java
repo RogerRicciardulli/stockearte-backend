@@ -10,10 +10,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.google.protobuf.Timestamp;
 import com.unla.stockearte.CreatePurchaseOrderResponse;
 import com.unla.stockearte.DeletePurchaseOrderResponse;
@@ -29,8 +27,6 @@ import com.unla.stockearte.repository.entity.OrderDetailsModel;
 import com.unla.stockearte.repository.OrderDetailsRepository;
 import com.unla.stockearte.repository.PurchaseOrderRepository;
 import com.unla.stockearte.repository.entity.PurchaseOrderModel;
-import com.unla.stockearte.repository.entity.StoreModel;
-import com.unla.stockearte.repository.entity.UserModel;
 import com.unla.stockearte.repository.model.PurchaseOrderKafka;
 
 @Service
@@ -72,7 +68,6 @@ public class PurchaseOrderServiceLogic {
 		purchaseOrder.setObservations(observaciones);
 		purchaseOrder.setOrderDispatch(ordenDespacho);
 		purchaseOrder.setHabilitado(true);
-		
 		PurchaseOrderModel model = purchaseRepository.save(purchaseOrder);
 		
 		PurchaseOrderKafka order = new PurchaseOrderKafka();
@@ -82,11 +77,16 @@ public class PurchaseOrderServiceLogic {
 		order.setList(detailsList);
 		kafkaService.sendPurchaseOrder(order);
 		
-		String nameOrder = Long.toString(idTienda) +"-despacho";
-		kafkaTopicService.createTopic("orden-de-compra", 1, 1);
+		/*String nameOrder = Long.toString(idTienda) +"-despacho";
+		kafkaTopicService.createTopic("orden-de-compra", 1, 1);*/
 		
-		String nameTopicDispatch = Long.toString(idTienda) +"-despacho";
-		kafkaListenerService.iniciarConsumo(nameTopicDispatch);
+		String nameTopicSolicitud = Long.toString(idTienda) +"-solicitudes";
+		String estado = kafkaListenerService.iniciarConsumoSolicitudes(nameTopicSolicitud, model.getId());
+		
+		if("ACEPTADA".equalsIgnoreCase(estado)) {
+			String nameTopicDispatch = Long.toString(idTienda) +"-despacho";
+			kafkaListenerService.iniciarConsumoDespacho(nameTopicDispatch);
+		}
 		
 		CreatePurchaseOrderResponse.Builder response = CreatePurchaseOrderResponse.newBuilder();
 		response.setSuccess(true);
@@ -178,11 +178,11 @@ public class PurchaseOrderServiceLogic {
 	@Transactional
 	  public void updateStateOrder(DispatchOrder dispatchOrder) {
 		  PurchaseOrderModel orden = purchaseRepository.getById(dispatchOrder.getIdOrden());
-		  orden.setReception(LocalDateTime.now());
-		  orden.setState("RECIBIDA");
+		  //orden.setReception(LocalDateTime.now());
+		  //orden.setState("RECIBIDA");
+		  orden.setOrderDispatch(Long.toString(dispatchOrder.getIdDespacho()));
 		  purchaseRepository.save(orden);
-		  kafkaService.sendDespacho(orden.getOrderDispatch(), LocalDateTime.now().toString());
-		  
+		  //kafkaService.sendDespacho(orden.getOrderDispatch(), LocalDateTime.now().toString());
 	   }
 
 	public LocalDateTime convertToLocalDateTime(Timestamp timestamp) {
@@ -197,4 +197,13 @@ public class PurchaseOrderServiceLogic {
                         .setNanos(instant.getNano())
                         .build();	
         }
+	
+	
+	public void actualizarEstadoOrden(Long id, String estado) {
+		Optional<PurchaseOrderModel> orden = purchaseRepository.findById(id);
+		if(orden.isPresent()) {
+			orden.get().setState(estado);
+			purchaseRepository.save(orden.get());
+		}
+	}
 }

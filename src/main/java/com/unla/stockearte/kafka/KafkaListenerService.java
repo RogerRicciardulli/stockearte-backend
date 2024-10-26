@@ -1,24 +1,19 @@
 package com.unla.stockearte.kafka;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unla.stockearte.repository.entity.DispatchOrder;
 import com.unla.stockearte.services.PurchaseOrderServiceLogic;
-
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.ExecutorService;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import java.util.ArrayList;
 
 @Service
-public class KafkaListenerService implements Runnable{
+public class KafkaListenerService{
 
 	/*
 	 * entonces desde stockearte tengo que ver el topic codTienda/despacho y con el
@@ -49,7 +44,37 @@ public class KafkaListenerService implements Runnable{
 	//@PostConstruct
 	
 
-	public void iniciarConsumo(String topicName) {
+	public String iniciarConsumoSolicitudes(String topicName, Long idOrden) {
+		Collection<String> topics = new ArrayList<>();
+	    topics.add(topicName);
+		kafkaConsumer.subscribe(topics);
+		
+		final String[] estado = { "prueba" };
+		
+		flag = true;
+			while (flag) {
+				ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(100));
+				records.forEach(record -> {
+					System.out.println("Mensaje recibido: " + record.value());
+
+					try {
+						DispatchOrder order = objectMapper.readValue(record.value(), DispatchOrder.class);
+						System.out.println("ESTADO:" + order.getEstado());
+						estado[0] = order.getEstado();
+						purchaseOrderServiceLogic.actualizarEstadoOrden(idOrden, order.getEstado());
+						flag = false;
+					} catch (Exception e) {
+						System.err.println("Error al deserializar el mensaje: " + e.getMessage());
+						e.printStackTrace(); 
+					}
+
+				});
+			}
+			
+			return estado[0];
+	}
+	
+	public void iniciarConsumoDespacho(String topicName) {
 		kafkaConsumer.subscribe(Collections.singletonList(topicName));
 		flag = true;
 			while (flag) {
@@ -59,8 +84,6 @@ public class KafkaListenerService implements Runnable{
 
 					try {
 						DispatchOrder order = objectMapper.readValue(record.value(), DispatchOrder.class);
-						System.out.println("ID ORDEN" + order.getIdOrden());
-						System.out.println("ID DESPACHO" + order.getIdDespacho());
 						if(order.getIdDespacho()!=0) {
 							purchaseOrderServiceLogic.updateStateOrder(order);
 						}
@@ -81,10 +104,6 @@ public class KafkaListenerService implements Runnable{
 		}
 	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 }
