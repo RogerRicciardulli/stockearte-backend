@@ -58,6 +58,62 @@ paths:
                   $ref: '#/components/schemas/PurchaseOrder'
         '500':
           description: Internal server error
+  /filters:
+    post:
+      summary: Create a new filters model
+      operationId: createFiltersModel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFiltersModelRequest'
+      responses:
+        '200':
+          description: Successful response with the created filter ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFiltersModelResponse'
+        '400':
+          description: Bad request
+    put:
+      summary: Update an existing filters model
+      operationId: updateFiltersModel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFiltersModelRequest'
+      responses:
+        '200':
+          description: Successful update response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateFiltersModelResponse'
+        '404':
+          description: Filter not found
+    delete:
+      summary: Delete a filters model by ID
+      operationId: deleteFiltersModel
+      parameters:
+        - name: id
+          in: query
+          description: ID of the filter to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful deletion response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteFiltersModelResponse'
+        '404':
+          description: Filter not found
 components:
   schemas:
     PurchaseOrder:
@@ -107,3 +163,76 @@ components:
           type: integer
           format: int32
           example: 2
+    CreateFiltersModelRequest:
+      type: object
+      properties:
+        productCode:
+          type: string
+          example: "ABC123"
+        filtersName:
+          type: string
+          example: "New Filter"
+        state:
+          type: string
+          example: "active"
+        idTienda:
+          type: integer
+          example: 1001
+        desde:
+          type: string
+          format: date
+          example: "2024-01-01"
+        hasta:
+          type: string
+          format: date
+          example: "2024-12-31"
+        habilitado:
+          type: boolean
+          example: true
+    CreateFiltersModelResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+    UpdateFiltersModelRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        productCode:
+          type: string
+          example: "ABC123"
+        filtersName:
+          type: string
+          example: "Updated Filter"
+        state:
+          type: string
+          example: "active"
+        idTienda:
+          type: integer
+          example: 1001
+        desde:
+          type: string
+          format: date
+          example: "2024-01-01"
+        hasta:
+          type: string
+          format: date
+          example: "2024-12-31"
+        habilitado:
+          type: boolean
+          example: true
+    UpdateFiltersModelResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+    DeleteFiltersModelResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true

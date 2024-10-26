@@ -2,7 +2,6 @@ package com.unla.stockearte.kafka;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.context.annotation.Bean;
@@ -11,8 +10,6 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 
 @Configuration
 @EnableKafka

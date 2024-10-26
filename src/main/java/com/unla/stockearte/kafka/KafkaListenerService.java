@@ -2,8 +2,6 @@ package com.unla.stockearte.kafka;
 
 import java.time.Duration;
 import java.util.Collections;
-import java.util.Map;
-
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -41,15 +39,7 @@ public class KafkaListenerService{
 	public KafkaListenerService() {
 		super();
 	}
-
-	/*public void setNombreTopico(String nombreTopico) {
-		this.nombreTopico = nombreTopico;
-		//kafkaConsumer.subscribe(Collections.singletonList(nombreTopico));
-	}
-*/
-	//@PostConstruct
 	
-
 	public String iniciarConsumoSolicitudes(String topicName, Long idOrden) {
 		Collection<String> topics = new ArrayList<>();
 	    topics.add(topicName);
@@ -65,7 +55,6 @@ public class KafkaListenerService{
 
 					try {
 						DispatchOrder order = objectMapper.readValue(record.value(), DispatchOrder.class);
-						System.out.println("ESTADO:" + order.getEstado());
 						estado[0] = order.getEstado();
 						purchaseOrderServiceLogic.actualizarEstadoOrden(idOrden, order.getEstado());
 						flag = false;

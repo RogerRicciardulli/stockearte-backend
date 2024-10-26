@@ -77,9 +77,6 @@ public class PurchaseOrderServiceLogic {
 		order.setList(detailsList);
 		kafkaService.sendPurchaseOrder(order);
 		
-		/*String nameOrder = Long.toString(idTienda) +"-despacho";
-		kafkaTopicService.createTopic("orden-de-compra", 1, 1);*/
-		
 		String nameTopicSolicitud = Long.toString(idTienda) +"-solicitudes";
 		String estado = kafkaListenerService.iniciarConsumoSolicitudes(nameTopicSolicitud, model.getId());
 		
@@ -178,11 +175,11 @@ public class PurchaseOrderServiceLogic {
 	@Transactional
 	  public void updateStateOrder(DispatchOrder dispatchOrder) {
 		  PurchaseOrderModel orden = purchaseRepository.getById(dispatchOrder.getIdOrden());
-		  //orden.setReception(LocalDateTime.now());
-		  //orden.setState("RECIBIDA");
+		  orden.setReception(LocalDateTime.now());
+		  orden.setState("RECIBIDA");
 		  orden.setOrderDispatch(Long.toString(dispatchOrder.getIdDespacho()));
 		  purchaseRepository.save(orden);
-		  //kafkaService.sendDespacho(orden.getOrderDispatch(), LocalDateTime.now().toString());
+		  kafkaService.sendDespacho(orden.getOrderDispatch(), LocalDateTime.now().toString());
 	   }
 
 	public LocalDateTime convertToLocalDateTime(Timestamp timestamp) {
