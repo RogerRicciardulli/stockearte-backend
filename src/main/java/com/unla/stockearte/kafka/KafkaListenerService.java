@@ -70,7 +70,10 @@ public class KafkaListenerService{
 	}
 	
 	public void iniciarConsumoDespacho(String topicName) {
-		kafkaConsumer.subscribe(Collections.singletonList(topicName));
+		Collection<String> topics = new ArrayList<>();
+	    topics.add(topicName);
+		kafkaConsumer.subscribe(topics);
+		
 		flag = true;
 			while (flag) {
 				ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(100));
