@@ -59,4 +59,16 @@ public interface FiltersServicePortType {
         @WebParam(name = "deleteFiltersModelRequest", targetNamespace = "http://stockearte-backend.com/", partName = "parameters")
         DeleteFiltersModelRequest parameters);
 
+    /**
+     * 
+     * @param parameters
+     * @return
+     *     returns com.stockearte_backend.GetFiltersResponse
+     */
+    @WebMethod(action = "http://stockearte-backend.com/getFilters")
+    @WebResult(name = "getFiltersResponse", targetNamespace = "http://stockearte-backend.com/", partName = "parameters")
+    public GetFiltersResponse getFilters(
+        @WebParam(name = "getFiltersRequest", targetNamespace = "http://stockearte-backend.com/", partName = "parameters")
+        GetFiltersRequest parameters);
+
 }

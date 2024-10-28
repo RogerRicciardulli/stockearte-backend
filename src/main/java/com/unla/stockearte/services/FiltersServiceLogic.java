@@ -1,5 +1,6 @@
 package com.unla.stockearte.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,10 @@ public class FiltersServiceLogic {
 			return true;
 		}
 		return false;
+	}
+	
+	public List<FiltersModel> getFilters(){
+		return repository.findByHabilitadoTrue();
 	}
 
 }

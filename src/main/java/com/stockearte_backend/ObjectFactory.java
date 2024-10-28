@@ -30,6 +30,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetFiltersRequest }
+     * 
+     */
+    public GetFiltersRequest createGetFiltersRequest() {
+        return new GetFiltersRequest();
+    }
+
+    /**
      * Create an instance of {@link CreateFiltersModelRequest }
      * 
      */
@@ -75,6 +83,22 @@ public class ObjectFactory {
      */
     public UpdateFiltersModelResponse createUpdateFiltersModelResponse() {
         return new UpdateFiltersModelResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetFiltersResponse }
+     * 
+     */
+    public GetFiltersResponse createGetFiltersResponse() {
+        return new GetFiltersResponse();
+    }
+
+    /**
+     * Create an instance of {@link FilterType }
+     * 
+     */
+    public FilterType createFilterType() {
+        return new FilterType();
     }
 
 }
