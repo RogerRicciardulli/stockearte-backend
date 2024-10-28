@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://stockearte-backend.com/"
+	targetNamespace="http://stockearte-backend.com/"
+	xmlns="http://stockearte-backend.com/"
+	elementFormDefault="qualified">
+
+	<xs:element name="createCatalogoRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="titulo" type="xs:string" />
+				<xs:element name="tiendaID" type="xs:long" />
+				<xs:element name="productos" type="ProductosType" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="createCatalogoResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="id" type="xs:long" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="updateCatalogoRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="id" type="xs:long" />
+				<xs:element name="titulo" type="xs:string" />
+				<xs:element name="tiendaID" type="xs:long" />
+				<xs:element name="productos" type="ProductosType" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="updateCatalogoResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="success" type="xs:boolean" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="deleteCatalogoRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="id" type="xs:long" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="deleteCatalogoResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="success" type="xs:boolean" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="getAllCatalogoRequest">
+		<xs:complexType>
+			<xs:sequence />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="getAllCatalogoResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="catalogos" type="CatalogosType" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="getCatalogoByIdRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="id" type="xs:long" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="getCatalogoByIdResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="catalogo" type="CatalogoType" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="exportarCatalogoPDFRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="titulo" type="xs:string"/>
+                <xs:element name="productos" type="ProductosType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="exportarCatalogoPDFResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="urlPDF" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+	<xs:complexType name="CatalogosType">
+		<xs:sequence>
+			<xs:element name="catalogo" type="CatalogoType" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="CatalogoType">
+		<xs:sequence>
+			<xs:element name="id" type="xs:long" />
+			<xs:element name="titulo" type="xs:string" />
+			<xs:element name="tiendaID" type="xs:long" />
+			<xs:element name="productos" type="ProductosType" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ProductosType">
+		<xs:sequence>
+			<xs:element name="producto" type="ProductoType" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ProductoType">
+		<xs:sequence>
+			<xs:element name="id" type="xs:long" />
+			<xs:element name="nombre" type="xs:string" />
+			<xs:element name="codigo" type="xs:string" />
+			<xs:element name="talle" type="xs:string" />
+			<xs:element name="color" type="xs:string" />
+			<xs:element name="foto" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

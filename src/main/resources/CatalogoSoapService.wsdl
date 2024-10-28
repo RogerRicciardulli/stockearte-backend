@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://stockearte-backend.com/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             targetNamespace="http://stockearte-backend.com/"
+             name="CatalogoSoapService">
+
+    <types>
+        <xsd:schema>
+            <xsd:import namespace="http://stockearte-backend.com/" schemaLocation="catalogo.xsd"/>
+        </xsd:schema>
+    </types>
+
+    <message name="createCatalogoRequestMessage">
+        <part name="parameters" element="tns:createCatalogoRequest"/>
+    </message>
+
+    <message name="createCatalogoResponseMessage">
+        <part name="parameters" element="tns:createCatalogoResponse"/>
+    </message>
+
+    <message name="updateCatalogoRequestMessage">
+        <part name="parameters" element="tns:updateCatalogoRequest"/>
+    </message>
+
+    <message name="updateCatalogoResponseMessage">
+        <part name="parameters" element="tns:updateCatalogoResponse"/>
+    </message>
+
+    <message name="deleteCatalogoRequestMessage">
+        <part name="parameters" element="tns:deleteCatalogoRequest"/>
+    </message>
+
+    <message name="deleteCatalogoResponseMessage">
+        <part name="parameters" element="tns:deleteCatalogoResponse"/>
+    </message>
+
+    <message name="getAllCatalogoRequestMessage">
+        <part name="parameters" element="tns:getAllCatalogoRequest"/>
+    </message>
+
+    <message name="getAllCatalogoResponseMessage">
+        <part name="parameters" element="tns:getAllCatalogoResponse"/>
+    </message>
+    
+    <message name="getCatalogoByIdRequestMessage">
+        <part name="parameters" element="tns:getCatalogoByIdRequest"/>
+    </message>
+
+    <message name="getCatalogoByIdResponseMessage">
+        <part name="parameters" element="tns:getCatalogoByIdResponse"/>
+    </message>
+    
+    <message name="exportarCatalogoPDFRequestMessage">
+        <part name="parameters" element="tns:exportarCatalogoPDFRequest"/>
+    </message>
+    
+    <message name="exportarCatalogoPDFResponseMessage">
+        <part name="parameters" element="tns:exportarCatalogoPDFResponse"/>
+    </message> 
+
+    <portType name="CatalogoServicePortType">
+        <operation name="createCatalogo">
+            <input message="tns:createCatalogoRequestMessage"/>
+            <output message="tns:createCatalogoResponseMessage"/>
+        </operation>
+        <operation name="updateCatalogo">
+            <input message="tns:updateCatalogoRequestMessage"/>
+            <output message="tns:updateCatalogoResponseMessage"/>
+        </operation>
+        <operation name="deleteCatalogo">
+            <input message="tns:deleteCatalogoRequestMessage"/>
+            <output message="tns:deleteCatalogoResponseMessage"/>
+        </operation>
+        <operation name="getAllCatalogo">
+            <input message="tns:getAllCatalogoRequestMessage"/>
+            <output message="tns:getAllCatalogoResponseMessage"/>
+        </operation>
+        <operation name="getCatalogoById">
+            <input message="tns:getCatalogoByIdRequestMessage"/>
+            <output message="tns:getCatalogoByIdResponseMessage"/>
+        </operation>
+        <operation name="exportarCatalogoPDF">
+            <input message="tns:exportarCatalogoPDFRequestMessage"/>
+            <output message="tns:exportarCatalogoPDFResponseMessage"/>
+        </operation>
+    </portType>
+
+    <binding name="CatalogoServiceBinding" type="tns:CatalogoServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="createCatalogo">
+            <soap:operation soapAction="http://stockearte-backend.com/createCatalogo"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="updateCatalogo">
+            <soap:operation soapAction="http://stockearte-backend.com/updateCatalogo"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="deleteCatalogo">
+            <soap:operation soapAction="http://stockearte-backend.com/deleteCatalogo"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="getAllCatalogo">
+            <soap:operation soapAction="http://stockearte-backend.com/getAllCatalogo"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="getCatalogoById">
+            <soap:operation soapAction="http://stockearte-backend.com/getCatalogoById"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+       <operation name="exportarCatalogoPDF">
+            <soap:operation soapAction="http://stockearte-backend.com/exportarCatalogoPDF"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="CatalogoService">
+        <port name="CatalogoServicePort" binding="tns:CatalogoServiceBinding">
+            <soap:address location="http://localhost:8080/ws/catalogo"/>
+        </port>
+    </service>
+</definitions>
